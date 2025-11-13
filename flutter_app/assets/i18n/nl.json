@@ -1,0 +1,16 @@
+{
+  "app.title": "FamQuest",
+  "today": "Vandaag",
+  "login": "Inloggen",
+  "email": "E-mail",
+  "password": "Wachtwoord",
+  "otp": "2FA (optioneel)",
+  "tasks": "Taken",
+  "rewards": "Beloningen",
+  "settings": "Instellingen",
+  "vision.tips": "Schoonmaaktips",
+  "admin": "Ouderbeheer",
+  "shop": "Shop",
+  "kiosk": "Kiosk",
+  "speak": "Spreek taak in"
+}

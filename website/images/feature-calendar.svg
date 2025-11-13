@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <!-- Background -->
+  <rect width="600" height="400" fill="#eff6ff" rx="20"/>
+
+  <!-- Calendar widget -->
+  <g transform="translate(50, 30)">
+    <!-- Header -->
+    <rect x="0" y="0" width="500" height="60" fill="#3b82f6" rx="12"/>
+    <text x="250" y="40" font-size="24" fill="white" text-anchor="middle" font-weight="bold">November 2025</text>
+    <text x="30" y="40" font-size="20" fill="white">‹</text>
+    <text x="470" y="40" font-size="20" fill="white">›</text>
+
+    <!-- Day headers -->
+    <rect x="0" y="60" width="500" height="40" fill="white"/>
+    <g fill="#64748b" font-size="14" font-weight="600">
+      <text x="35" y="85" text-anchor="middle">Ma</text>
+      <text x="107" y="85" text-anchor="middle">Di</text>
+      <text x="178" y="85" text-anchor="middle">Wo</text>
+      <text x="250" y="85" text-anchor="middle">Do</text>
+      <text x="321" y="85" text-anchor="middle">Vr</text>
+      <text x="393" y="85" text-anchor="middle">Za</text>
+      <text x="464" y="85" text-anchor="middle">Zo</text>
+    </g>
+
+    <!-- Calendar grid -->
+    <rect x="0" y="100" width="500" height="240" fill="white"/>
+
+    <!-- Week 1 -->
+    <g transform="translate(0, 120)">
+      <rect x="5" y="0" width="60" height="50" rx="8" fill="#f1f5f9"/>
+      <text x="35" y="28" font-size="16" fill="#94a3b8" text-anchor="middle">28</text>
+
+      <rect x="77" y="0" width="60" height="50" rx="8" fill="#f1f5f9"/>
+      <text x="107" y="28" font-size="16" fill="#94a3b8" text-anchor="middle">29</text>
+
+      <rect x="148" y="0" width="60" height="50" rx="8" fill="#f1f5f9"/>
+      <text x="178" y="28" font-size="16" fill="#94a3b8" text-anchor="middle">30</text>
+
+      <rect x="220" y="0" width="60" height="50" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="250" y="28" font-size="16" fill="#1e293b" text-anchor="middle">31</text>
+
+      <rect x="291" y="0" width="60" height="50" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="321" y="28" font-size="16" fill="#1e293b" text-anchor="middle">1</text>
+      <circle cx="321" cy="38" r="3" fill="#f59e0b"/>
+
+      <rect x="363" y="0" width="60" height="50" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="393" y="28" font-size="16" fill="#1e293b" text-anchor="middle">2</text>
+
+      <rect x="434" y="0" width="60" height="50" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="464" y="28" font-size="16" fill="#1e293b" text-anchor="middle">3</text>
+    </g>
+
+    <!-- Week 2 (with events) -->
+    <g transform="translate(0, 180)">
+      <rect x="5" y="0" width="60" height="50" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="35" y="28" font-size="16" fill="#1e293b" text-anchor="middle">4</text>
+      <circle cx="35" cy="38" r="3" fill="#10b981"/>
+
+      <rect x="77" y="0" width="60" height="50" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+      <text x="107" y="28" font-size="16" fill="#1e40af" text-anchor="middle" font-weight="bold">5</text>
+      <circle cx="95" cy="38" r="3" fill="#ef4444"/>
+      <circle cx="107" cy="38" r="3" fill="#10b981"/>
+      <circle cx="119" cy="38" r="3" fill="#f59e0b"/>
+
+      <rect x="148" y="0" width="60" height="50" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="178" y="28" font-size="16" fill="#1e293b" text-anchor="middle">6</text>
+      <circle cx="178" cy="38" r="3" fill="#10b981"/>
+
+      <rect x="220" y="0" width="60" height="50" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="250" y="28" font-size="16" fill="#1e293b" text-anchor="middle">7</text>
+
+      <rect x="291" y="0" width="60" height="50" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="321" y="28" font-size="16" fill="#1e293b" text-anchor="middle">8</text>
+      <circle cx="321" cy="38" r="3" fill="#f59e0b"/>
+
+      <rect x="363" y="0" width="60" height="50" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="393" y="28" font-size="16" fill="#1e293b" text-anchor="middle">9</text>
+
+      <rect x="434" y="0" width="60" height="50" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="464" y="28" font-size="16" fill="#1e293b" text-anchor="middle">10</text>
+    </g>
+  </g>
+
+  <!-- Event legend -->
+  <g transform="translate(50, 360)">
+    <circle cx="10" cy="0" r="5" fill="#10b981"/>
+    <text x="25" y="5" font-size="14" fill="#475569">Taken</text>
+
+    <circle cx="100" cy="0" r="5" fill="#ef4444"/>
+    <text x="115" y="5" font-size="14" fill="#475569">Evenementen</text>
+
+    <circle cx="230" cy="0" r="5" fill="#f59e0b"/>
+    <text x="245" y="5" font-size="14" fill="#475569">Afspraken</text>
+  </g>
+</svg>

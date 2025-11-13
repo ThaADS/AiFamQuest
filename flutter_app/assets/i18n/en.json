@@ -1,0 +1,16 @@
+{
+  "app.title": "FamQuest",
+  "today": "Today",
+  "login": "Log in",
+  "email": "Email",
+  "password": "Password",
+  "otp": "2FA (optional)",
+  "tasks": "Tasks",
+  "rewards": "Rewards",
+  "settings": "Settings",
+  "vision.tips": "Cleaning Tips",
+  "admin": "Parent Admin",
+  "shop": "Shop",
+  "kiosk": "Kiosk",
+  "speak": "Voice task"
+}

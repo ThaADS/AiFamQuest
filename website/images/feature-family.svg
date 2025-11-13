@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <!-- Background -->
+  <rect width="600" height="400" fill="#fef2f2" rx="20"/>
+
+  <!-- Family members -->
+  <g transform="translate(100, 100)">
+    <!-- Parent 1 -->
+    <circle cx="80" cy="60" r="45" fill="#fecaca"/>
+    <text x="80" y="75" font-size="32" text-anchor="middle">👨</text>
+    <rect x="30" y="120" width="100" height="60" rx="8" fill="white" stroke="#fca5a5"/>
+    <text x="80" y="145" font-size="14" fill="#1e293b" text-anchor="middle" font-weight="600">Papa</text>
+    <text x="80" y="165" font-size="12" fill="#dc2626" text-anchor="middle">580 punten</text>
+
+    <!-- Parent 2 -->
+    <circle cx="220" cy="60" r="45" fill="#fecaca"/>
+    <text x="220" y="75" font-size="32" text-anchor="middle">👩</text>
+    <rect x="170" y="120" width="100" height="60" rx="8" fill="white" stroke="#fca5a5"/>
+    <text x="220" y="145" font-size="14" fill="#1e293b" text-anchor="middle" font-weight="600">Mama</text>
+    <text x="220" y="165" font-size="12" fill="#dc2626" text-anchor="middle">620 punten</text>
+
+    <!-- Child 1 -->
+    <circle cx="360" cy="60" r="45" fill="#bfdbfe"/>
+    <text x="360" y="75" font-size="32" text-anchor="middle">👧</text>
+    <rect x="310" y="120" width="100" height="60" rx="8" fill="white" stroke="#93c5fd"/>
+    <text x="360" y="145" font-size="14" fill="#1e293b" text-anchor="middle" font-weight="600">Sarah (13)</text>
+    <text x="360" y="165" font-size="12" fill="#2563eb" text-anchor="middle">450 punten</text>
+
+    <!-- Child 2 -->
+    <circle cx="120" cy="240" r="40" fill="#bfdbfe"/>
+    <text x="120" y="253" font-size="28" text-anchor="middle">👦</text>
+    <rect x="75" y="295" width="90" height="60" rx="8" fill="white" stroke="#93c5fd"/>
+    <text x="120" y="320" font-size="14" fill="#1e293b" text-anchor="middle" font-weight="600">Max (10)</text>
+    <text x="120" y="340" font-size="12" fill="#2563eb" text-anchor="middle">320 punten</text>
+
+    <!-- Child 3 -->
+    <circle cx="280" cy="240" r="35" fill="#c7d2fe"/>
+    <text x="280" y="252" font-size="24" text-anchor="middle">👶</text>
+    <rect x="240" y="290" width="80" height="60" rx="8" fill="white" stroke="#a5b4fc"/>
+    <text x="280" y="315" font-size="14" fill="#1e293b" text-anchor="middle" font-weight="600">Lisa (6)</text>
+    <text x="280" y="335" font-size="12" fill="#4f46e5" text-anchor="middle">180 punten</text>
+  </g>
+
+  <!-- Connection lines -->
+  <g stroke="#e2e8f0" stroke-width="2" fill="none">
+    <path d="M 180 180 Q 250 200 200 260"/>
+    <path d="M 320 180 Q 280 200 300 260"/>
+  </g>
+
+  <!-- Feature text -->
+  <g transform="translate(50, 365)">
+    <text x="250" y="0" font-size="18" fill="#475569" text-anchor="middle" font-weight="600">Voor het hele gezin - elk lid zijn eigen rol</text>
+  </g>
+</svg>

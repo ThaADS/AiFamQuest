@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="appGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#f1f5f9"/>
+
+  <!-- Phone mockup -->
+  <g transform="translate(100, 50)">
+    <!-- Phone frame -->
+    <rect x="0" y="0" width="400" height="700" rx="30" fill="#1e293b"/>
+    <rect x="15" y="15" width="370" height="670" rx="20" fill="url(#appGrad)"/>
+
+    <!-- App header -->
+    <rect x="15" y="15" width="370" height="80" rx="20" fill="#6366f1"/>
+    <text x="200" y="65" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="white" text-anchor="middle">FamQuest</text>
+
+    <!-- Calendar grid -->
+    <g transform="translate(35, 120)">
+      <!-- Day headers -->
+      <text x="25" y="30" font-size="14" fill="#64748b" font-weight="600">M</text>
+      <text x="75" y="30" font-size="14" fill="#64748b" font-weight="600">D</text>
+      <text x="125" y="30" font-size="14" fill="#64748b" font-weight="600">W</text>
+      <text x="175" y="30" font-size="14" fill="#64748b" font-weight="600">D</text>
+      <text x="225" y="30" font-size="14" fill="#64748b" font-weight="600">V</text>
+      <text x="275" y="30" font-size="14" fill="#64748b" font-weight="600">Z</text>
+      <text x="325" y="30" font-size="14" fill="#64748b" font-weight="600">Z</text>
+
+      <!-- Calendar cells with tasks -->
+      <rect x="10" y="50" width="40" height="40" rx="8" fill="#e0e7ff"/>
+      <text x="30" y="77" font-size="16" fill="#4338ca" text-anchor="middle">11</text>
+      <circle cx="30" cy="85" r="3" fill="#10b981"/>
+
+      <rect x="60" y="50" width="40" height="40" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="80" y="77" font-size="16" fill="#475569" text-anchor="middle">12</text>
+
+      <rect x="110" y="50" width="40" height="40" rx="8" fill="white" stroke="#e2e8f0"/>
+      <text x="130" y="77" font-size="16" fill="#475569" text-anchor="middle">13</text>
+      <circle cx="130" cy="85" r="3" fill="#f59e0b"/>
+    </g>
+
+    <!-- Task list -->
+    <g transform="translate(35, 280)">
+      <text x="0" y="0" font-size="18" font-weight="bold" fill="#1e293b">Vandaag</text>
+
+      <!-- Task 1 -->
+      <rect x="0" y="15" width="330" height="60" rx="12" fill="white" stroke="#e2e8f0"/>
+      <circle cx="25" cy="45" r="8" fill="none" stroke="#10b981" stroke-width="2"/>
+      <text x="45" y="42" font-size="15" fill="#1e293b">Kamer opruimen</text>
+      <text x="45" y="58" font-size="12" fill="#64748b">📦 10 punten • Sarah</text>
+
+      <!-- Task 2 -->
+      <rect x="0" y="85" width="330" height="60" rx="12" fill="white" stroke="#e2e8f0"/>
+      <circle cx="25" cy="115" r="8" fill="none" stroke="#f59e0b" stroke-width="2"/>
+      <text x="45" y="112" font-size="15" fill="#1e293b">Afwas doen</text>
+      <text x="45" y="128" font-size="12" fill="#64748b">🍽️ 15 punten • Max</text>
+
+      <!-- Task 3 -->
+      <rect x="0" y="155" width="330" height="60" rx="12" fill="white" stroke="#e2e8f0"/>
+      <path d="M 17 185 L 25 193 L 33 175" stroke="#10b981" stroke-width="2" fill="none"/>
+      <text x="45" y="182" font-size="15" fill="#64748b" text-decoration="line-through">Huiswerk maken</text>
+      <text x="45" y="198" font-size="12" fill="#10b981">✓ Voltooid • Lisa</text>
+    </g>
+
+    <!-- Bottom nav -->
+    <g transform="translate(35, 630)">
+      <rect x="0" y="0" width="330" height="60" fill="white" stroke="#e2e8f0"/>
+      <text x="55" y="35" font-size="12" fill="#6366f1">📅</text>
+      <text x="165" y="35" font-size="12" fill="#94a3b8">📋</text>
+      <text x="275" y="35" font-size="12" fill="#94a3b8">🏆</text>
+    </g>
+  </g>
+
+  <!-- Feature highlights -->
+  <g transform="translate(550, 80)">
+    <text x="0" y="0" font-size="42" font-weight="bold" fill="#1e293b">Gezinstaken</text>
+    <text x="0" y="50" font-size="42" font-weight="bold" fill="#1e293b">gemakkelijk</text>
+    <text x="0" y="100" font-size="42" font-weight="bold" fill="#6366f1">gemaakt</text>
+
+    <text x="0" y="160" font-size="20" fill="#64748b">✓ AI-planning voor eerlijke verdeling</text>
+    <text x="0" y="200" font-size="20" fill="#64748b">✓ Gamificatie met punten & badges</text>
+    <text x="0" y="240" font-size="20" fill="#64748b">✓ Offline-first, altijd beschikbaar</text>
+    <text x="0" y="280" font-size="20" fill="#64748b">✓ Voor het hele gezin, elk apparaat</text>
+
+    <!-- CTA button -->
+    <rect x="0" y="340" width="280" height="60" rx="30" fill="#6366f1"/>
+    <text x="140" y="378" font-size="20" font-weight="bold" fill="white" text-anchor="middle">Start gratis proefperiode</text>
+  </g>
+</svg>
