@@ -83,3 +83,9 @@ Generated.xcconfig
 
 # Windows reserved names
 nul
+
+# Documentation files (keep locally, exclude from git)
+*.md
+!README.md
+!CONTRIBUTING.md
+!LICENSE.md
