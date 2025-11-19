@@ -658,6 +658,170 @@ def get_fairness_report(
     )
 
 
+@router.get("/pool", response_model=List[TaskOut])
+def get_task_pool(
+    d: Session = Depends(db),
+    payload=Depends(get_current_user)
+):
+    """
+    Get claimable task pool for family.
+
+    Returns all open, claimable tasks that haven't been claimed yet.
+    Useful for "task marketplace" where kids can choose their own tasks.
+
+    Returns:
+        List of claimable tasks with points, duration, and priority
+    """
+    user = d.query(models.User).filter_by(id=payload["sub"]).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+
+    # Get claimable tasks
+    tasks = d.query(models.Task).filter(
+        models.Task.familyId == user.familyId,
+        models.Task.claimable == True,
+        models.Task.status == "open",
+        models.Task.claimedBy.is_(None)  # Not yet claimed
+    ).order_by(
+        models.Task.points.desc(),  # Sort by points (high value first)
+        models.Task.due.asc().nullslast()
+    ).all()
+
+    return tasks
+
+
+@router.post("/{task_id}/claim")
+def claim_task(
+    task_id: str,
+    d: Session = Depends(db),
+    payload=Depends(get_current_user)
+):
+    """
+    Claim task from pool with 30-minute TTL.
+
+    When a user claims a task, it's locked to them for 30 minutes.
+    If not completed within 30 minutes, it returns to the pool.
+
+    Returns:
+        {
+            "success": true,
+            "task_id": "uuid",
+            "claimed_by": "user_id",
+            "claim_expires_at": "2025-11-19T20:30:00Z"
+        }
+    """
+    user = d.query(models.User).filter_by(id=payload["sub"]).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+
+    task = d.query(models.Task).filter_by(id=task_id).first()
+    if not task:
+        raise HTTPException(404, "Task not found")
+
+    # Verify family access
+    if task.familyId != user.familyId:
+        raise HTTPException(403, "Cannot access other families' tasks")
+
+    # Verify task is claimable
+    if not task.claimable:
+        raise HTTPException(400, "Task is not claimable")
+
+    # Check if task is already claimed
+    if task.claimedBy:
+        # Check if claim has expired
+        if task.claimedAt:
+            claim_age = (datetime.utcnow() - task.claimedAt).total_seconds() / 60
+            if claim_age < 30:
+                claimed_user = d.query(models.User).filter_by(id=task.claimedBy).first()
+                raise HTTPException(
+                    409,
+                    f"Task already claimed by {claimed_user.displayName if claimed_user else 'another user'}. "
+                    f"Try again in {int(30 - claim_age)} minutes."
+                )
+            # Claim has expired, allow re-claim
+        else:
+            # claimedBy set but no timestamp, allow re-claim (shouldn't happen)
+            pass
+
+    # Claim task
+    task.claimedBy = user.id
+    task.claimedAt = datetime.utcnow()
+    task.updatedAt = datetime.utcnow()
+
+    d.commit()
+    d.refresh(task)
+
+    # Calculate expiry time
+    claim_expires_at = task.claimedAt + timedelta(minutes=30)
+
+    # Audit log
+    audit(d, actorUserId=user.id, familyId=user.familyId,
+          action="task.claim", meta=task.title)
+
+    return {
+        "success": True,
+        "task_id": task.id,
+        "title": task.title,
+        "claimed_by": user.id,
+        "claimed_by_name": user.displayName,
+        "claim_expires_at": claim_expires_at.isoformat(),
+        "points": task.points,
+        "est_duration": task.estDuration
+    }
+
+
+@router.post("/{task_id}/unclaim")
+def unclaim_task(
+    task_id: str,
+    d: Session = Depends(db),
+    payload=Depends(get_current_user)
+):
+    """
+    Release claimed task back to pool.
+
+    User can unclaim a task they previously claimed, returning it to the pool
+    for others to claim.
+
+    Returns:
+        Success confirmation
+    """
+    user = d.query(models.User).filter_by(id=payload["sub"]).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+
+    task = d.query(models.Task).filter_by(id=task_id).first()
+    if not task:
+        raise HTTPException(404, "Task not found")
+
+    # Verify family access
+    if task.familyId != user.familyId:
+        raise HTTPException(403, "Cannot access other families' tasks")
+
+    # Verify user owns this claim
+    if task.claimedBy != user.id:
+        if task.claimedBy:
+            raise HTTPException(403, "Task is claimed by another user")
+        else:
+            raise HTTPException(400, "Task is not claimed")
+
+    # Unclaim task
+    task.claimedBy = None
+    task.claimedAt = None
+    task.updatedAt = datetime.utcnow()
+
+    d.commit()
+
+    # Audit log
+    audit(d, actorUserId=user.id, familyId=user.familyId,
+          action="task.unclaim", meta=task.title)
+
+    return {
+        "success": True,
+        "task_id": task.id,
+        "message": f"Task '{task.title}' returned to pool"
+    }
+
+
 @router.delete("/{task_id}")
 def delete_task(
     task_id: str,

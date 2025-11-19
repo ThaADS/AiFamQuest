@@ -1,6 +1,6 @@
 """
 Premium Router
-Stripe integration for FamQuest monetization
+Stripe integration + In-App Purchase verification for FamQuest monetization
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -9,10 +9,15 @@ from core.db import SessionLocal
 from core.models import User
 from routers.auth import get_current_user
 from services.premium_service import PremiumService
+from services.iap_verification import IAPVerificationService
 from pydantic import BaseModel
 from typing import Optional
+from datetime import datetime
 import stripe
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/premium", tags=["premium"])
 
@@ -297,3 +302,123 @@ async def cancel_subscription(
 
     except stripe.error.StripeError as e:
         raise HTTPException(500, f"Stripe error: {str(e)}")
+
+
+# ===== In-App Purchase (IAP) Endpoints =====
+
+class IAPVerifyRequest(BaseModel):
+    """IAP receipt verification request"""
+    platform: str  # 'ios' or 'android'
+    receipt_data: Optional[str] = None  # iOS: base64 receipt
+    purchase_token: Optional[str] = None  # Android: purchase token
+    product_id: str
+    package_name: Optional[str] = "app.famquest"  # Android only
+
+
+@router.post("/verify-iap")
+async def verify_iap_purchase(
+    req: IAPVerifyRequest,
+    d: Session = Depends(db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Verify In-App Purchase (iOS App Store or Google Play).
+
+    iOS Request:
+    {
+        "platform": "ios",
+        "receipt_data": "base64_encoded_receipt",
+        "product_id": "app.famquest.family_unlock"
+    }
+
+    Android Request:
+    {
+        "platform": "android",
+        "purchase_token": "token_from_google_play",
+        "product_id": "app.famquest.family_unlock",
+        "package_name": "app.famquest"
+    }
+
+    Returns:
+    {
+        "success": true,
+        "product_id": "app.famquest.family_unlock",
+        "transaction_id": "...",
+        "premium_activated": true,
+        "expires_at": null  # or datetime for subscriptions
+    }
+    """
+    # Validate platform
+    if req.platform not in ["ios", "android"]:
+        raise HTTPException(400, "Platform must be 'ios' or 'android'")
+
+    # Validate required fields
+    if req.platform == "ios" and not req.receipt_data:
+        raise HTTPException(400, "receipt_data required for iOS")
+
+    if req.platform == "android" and not req.purchase_token:
+        raise HTTPException(400, "purchase_token required for Android")
+
+    try:
+        iap_service = IAPVerificationService()
+
+        # Verify receipt based on platform
+        if req.platform == "ios":
+            is_valid, purchase_info, error = await iap_service.verify_ios_receipt(
+                receipt_data=req.receipt_data,
+                product_id=req.product_id
+            )
+        else:  # android
+            is_valid, purchase_info, error = await iap_service.verify_android_receipt(
+                purchase_token=req.purchase_token,
+                product_id=req.product_id,
+                package_name=req.package_name
+            )
+
+        if not is_valid:
+            logger.warning(f"IAP verification failed for user {current_user.id}: {error}")
+            raise HTTPException(400, error or "Purchase verification failed")
+
+        # Get product info
+        product_info = iap_service.get_product_info(req.product_id)
+
+        # Activate premium based on product type
+        premium_service = PremiumService(d)
+
+        if req.product_id == "app.famquest.family_unlock":
+            # One-time family unlock
+            premium_service.activate_family_unlock(current_user, purchase_info.get("transaction_id"))
+            expiry = None
+
+        elif req.product_id in ["app.famquest.premium_monthly", "app.famquest.premium_yearly"]:
+            # Premium subscription
+            plan = "monthly" if "monthly" in req.product_id else "yearly"
+            purchase_date = datetime.fromisoformat(purchase_info.get("purchase_date", datetime.utcnow().isoformat()))
+            expiry = iap_service.calculate_expiry_date(req.product_id, purchase_date)
+
+            premium_service.activate_premium(
+                user=current_user,
+                plan=plan,
+                payment_id=purchase_info.get("transaction_id")
+            )
+
+        else:
+            raise HTTPException(400, f"Unknown product ID: {req.product_id}")
+
+        logger.info(f"IAP verified and activated for user {current_user.id}: {req.product_id}")
+
+        return {
+            "success": True,
+            "product_id": req.product_id,
+            "product_name": product_info.get("name"),
+            "transaction_id": purchase_info.get("transaction_id"),
+            "premium_activated": True,
+            "expires_at": expiry.isoformat() if expiry else None,
+            "purchase_date": purchase_info.get("purchase_date")
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"IAP verification error: {e}")
+        raise HTTPException(500, f"Purchase verification failed: {str(e)}")

@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "name": "famquest-api",
+  "builds": [
+    {
+      "src": "main.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.11"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "main.py"
+    }
+  ],
+  "env": {
+    "DATABASE_URL": "@database-url",
+    "REDIS_URL": "@redis-url",
+    "SECRET_KEY": "@secret-key",
+    "OPENROUTER_API_KEY": "@openrouter-api-key",
+    "GOOGLE_CLIENT_ID": "@google-client-id",
+    "GOOGLE_CLIENT_SECRET": "@google-client-secret",
+    "MICROSOFT_CLIENT_ID": "@microsoft-client-id",
+    "MICROSOFT_CLIENT_SECRET": "@microsoft-client-secret",
+    "FACEBOOK_APP_ID": "@facebook-app-id",
+    "FACEBOOK_APP_SECRET": "@facebook-app-secret",
+    "APPLE_CLIENT_ID": "@apple-client-id",
+    "APPLE_KEY_ID": "@apple-key-id",
+    "APPLE_TEAM_ID": "@apple-team-id",
+    "FCM_SERVER_KEY": "@fcm-server-key",
+    "S3_BUCKET": "@s3-bucket",
+    "S3_ACCESS_KEY": "@s3-access-key",
+    "S3_SECRET_KEY": "@s3-secret-key",
+    "S3_REGION": "@s3-region",
+    "SENDGRID_API_KEY": "@sendgrid-api-key",
+    "SENTRY_DSN": "@sentry-dsn",
+    "ENVIRONMENT": "production"
+  }
+}

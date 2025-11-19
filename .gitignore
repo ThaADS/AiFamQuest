@@ -112,3 +112,12 @@ nul
 !LICENSE.md
 !STATUS.md
 !CLAUDE.md
+!TEST_*.md
+!OPTIMIZATION_*.md
+!PERFORMANCE_*.md
+!VERCEL_*.md
+!MARKETING_*.md
+!DEPLOYMENT_*.md
+!DELIVERABLES_*.md
+!VISUAL_*.md
+!backend/API_*.md
