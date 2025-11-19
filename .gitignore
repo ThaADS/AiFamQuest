@@ -67,6 +67,14 @@ complete_*.py
 test_*.py
 test_*.sh
 *_output.txt
+*_SUMMARY.txt
+*_COMPLETE.txt
+*_FILES.txt
+
+# SQL files (except migrations in supabase/)
+*.sql
+!supabase/migrations/*.sql
+!supabase/schema_dump.sql
 
 # IDEs
 .vscode/
