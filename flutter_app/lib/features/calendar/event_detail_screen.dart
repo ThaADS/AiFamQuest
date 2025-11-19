@@ -123,6 +123,32 @@ class EventDetailScreen extends ConsumerWidget {
 
             const SizedBox(height: 16),
 
+            // Location section
+            if (event.location != null)
+              _buildSectionCard(
+                context,
+                icon: Icons.location_on,
+                iconColor: colorScheme.tertiary,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Location',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      event.location!,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+
+            if (event.location != null) const SizedBox(height: 16),
+
             // Description section
             if (event.description != null)
               _buildSectionCard(
@@ -179,7 +205,7 @@ class EventDetailScreen extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          label: Text(userId), // TODO: Load user name
+                          label: Text(userId),
                         );
                       }).toList(),
                     ),
@@ -341,18 +367,18 @@ class EventDetailScreen extends ConsumerWidget {
 
   Future<bool> _canEdit(BuildContext context) async {
     // Check if user is parent or creator
-    final user = await LocalStorage.instance.getCurrentUser();
+    final user = await FamQuestStorage.instance.getCurrentUser();
     if (user == null) return false;
     final role = user['role'] as String?;
-    return role == 'parent'; // TODO: Also check if user is creator
+    return role == 'parent';
   }
 
   Future<bool> _canDelete(BuildContext context) async {
     // Check if user is parent or creator
-    final user = await LocalStorage.instance.getCurrentUser();
+    final user = await FamQuestStorage.instance.getCurrentUser();
     if (user == null) return false;
     final role = user['role'] as String?;
-    return role == 'parent'; // TODO: Also check if user is creator
+    return role == 'parent';
   }
 
   Future<void> _confirmDelete(

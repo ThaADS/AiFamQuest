@@ -46,7 +46,7 @@ class SecureStorageService {
   }
 
   Future<String?> getAccessToken() async {
-    return await _storage.read(key: _keyAccessToken);
+    return _storage.read(key: _keyAccessToken);
   }
 
   Future<void> setRefreshToken(String token) async {
@@ -54,7 +54,7 @@ class SecureStorageService {
   }
 
   Future<String?> getRefreshToken() async {
-    return await _storage.read(key: _keyRefreshToken);
+    return _storage.read(key: _keyRefreshToken);
   }
 
   Future<bool> hasToken() async {
@@ -69,7 +69,7 @@ class SecureStorageService {
   }
 
   Future<String?> getUserId() async {
-    return await _storage.read(key: _keyUserId);
+    return _storage.read(key: _keyUserId);
   }
 
   Future<void> setFamilyId(String familyId) async {
@@ -77,7 +77,7 @@ class SecureStorageService {
   }
 
   Future<String?> getFamilyId() async {
-    return await _storage.read(key: _keyFamilyId);
+    return _storage.read(key: _keyFamilyId);
   }
 
   Future<void> setUserRole(String role) async {
@@ -85,7 +85,7 @@ class SecureStorageService {
   }
 
   Future<String?> getUserRole() async {
-    return await _storage.read(key: _keyUserRole);
+    return _storage.read(key: _keyUserRole);
   }
 
   Future<void> setUserEmail(String email) async {
@@ -93,7 +93,7 @@ class SecureStorageService {
   }
 
   Future<String?> getUserEmail() async {
-    return await _storage.read(key: _keyUserEmail);
+    return _storage.read(key: _keyUserEmail);
   }
 
   // ===== Apple Sign-In =====
@@ -103,7 +103,7 @@ class SecureStorageService {
   }
 
   Future<String?> getAppleUserId() async {
-    return await _storage.read(key: _keyAppleUserId);
+    return _storage.read(key: _keyAppleUserId);
   }
 
   Future<bool> hasAppleAccount() async {
@@ -214,12 +214,15 @@ class SecureStorageService {
   Future<bool> hasValidSession() async {
     final token = await getAccessToken();
     final userId = await getUserId();
-    return token != null && token.isNotEmpty && userId != null && userId.isNotEmpty;
+    return token != null &&
+        token.isNotEmpty &&
+        userId != null &&
+        userId.isNotEmpty;
   }
 
   /// Get all stored keys (for debugging)
   Future<Map<String, String>> getAllData() async {
-    return await _storage.readAll();
+    return _storage.readAll();
   }
 
   /// Delete specific key

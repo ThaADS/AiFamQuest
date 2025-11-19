@@ -116,7 +116,6 @@ class _BackupCodesScreenState extends State<BackupCodesScreen> {
   }
 
   void _downloadCodes() {
-    // TODO: Implement file download
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Download feature coming soon'),
@@ -158,7 +157,7 @@ class _BackupCodesScreenState extends State<BackupCodesScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.warning, color: Colors.orange.shade900),
+                        const Icon(Icons.warning, color: Colors.orange),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(

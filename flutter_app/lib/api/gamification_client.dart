@@ -52,6 +52,21 @@ class GamificationClient {
     throw Exception('Get streak failed: ${res.statusCode} ${res.body}');
   }
 
+  /// Get streak history (30-day overview)
+  Future<StreakHistory> getStreakHistory(String userId) async {
+    final token = await _getToken();
+    final res = await http.get(
+      Uri.parse('$baseUrl/gamification/streaks/$userId/history'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (res.statusCode == 200) {
+      return StreakHistory.fromJson(jsonDecode(res.body));
+    }
+
+    throw Exception('Get streak history failed: ${res.statusCode} ${res.body}');
+  }
+
   /// Get family leaderboard
   Future<List<LeaderboardEntry>> getLeaderboard(
     String familyId, {

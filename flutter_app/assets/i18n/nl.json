@@ -1,16 +1,58 @@
 {
-  "app.title": "FamQuest",
-  "today": "Vandaag",
-  "login": "Inloggen",
-  "email": "E-mail",
-  "password": "Wachtwoord",
-  "otp": "2FA (optioneel)",
-  "tasks": "Taken",
-  "rewards": "Beloningen",
-  "settings": "Instellingen",
-  "vision.tips": "Schoonmaaktips",
-  "admin": "Ouderbeheer",
-  "shop": "Shop",
-  "kiosk": "Kiosk",
-  "speak": "Spreek taak in"
+  "app_name": "FamQuest",
+  "navigation": {
+    "home": "Home",
+    "calendar": "Kalender",
+    "tasks": "Taken",
+    "shop": "Winkel",
+    "gamification": "Spelen",
+    "settings": "Instellingen"
+  },
+  "auth": {
+    "login": "Inloggen",
+    "logout": "Uitloggen",
+    "register": "Registreren",
+    "email": "E-mailadres",
+    "password": "Wachtwoord",
+    "create_account": "Account aanmaken",
+    "already_have_account": "Heb je al een account?",
+    "setup_two_fa": "2FA instellen",
+    "verify": "Verifiëren"
+  },
+  "tasks": {
+    "create_task": "Taak aanmaken",
+    "edit_task": "Taak bewerken",
+    "delete_task": "Taak verwijderen",
+    "complete_task": "Taak voltooien",
+    "task_title": "Taaktitel",
+    "task_description": "Beschrijving",
+    "task_category": "Categorie",
+    "task_due_date": "Vervaldatum",
+    "task_points": "Punten",
+    "claim_task": "Taak claimen",
+    "my_tasks": "Mijn taken",
+    "all_tasks": "Alle taken",
+    "no_tasks": "Geen taken"
+  },
+  "calendar": {
+    "calendar": "Kalender",
+    "create_event": "Afspraak aanmaken",
+    "today": "Vandaag",
+    "tomorrow": "Morgen"
+  },
+  "gamification": {
+    "points": "Punten",
+    "badges": "Badges",
+    "shop": "Winkel"
+  },
+  "profile": {
+    "profile": "Profiel",
+    "display_name": "Weergavenaam"
+  },
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "loading": "Laden..."
+  }
 }

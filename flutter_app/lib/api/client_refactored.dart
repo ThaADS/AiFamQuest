@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../services/local_storage.dart';
 import '../services/sync_queue.dart';
 import '../services/conflict_resolver.dart';
+import '../core/app_logger.dart';
 
 /// Refactored API client with offline-first architecture
 /// Reads from local Hive storage first, syncs in background
@@ -14,10 +15,10 @@ class ApiClientOfflineFirst {
 
   // ignore: unused_field
   final _storage = const FlutterSecureStorage();
-  final _localStorage = LocalStorage.instance;
+  final _localStorage = FamQuestStorage.instance;
   final _syncQueue = SyncQueue.instance;
   final _conflictResolver = ConflictResolver.instance;
-  final _uuid = Uuid();
+  final _uuid = const Uuid();
 
   String baseUrl = const String.fromEnvironment('API_BASE', defaultValue: 'http://localhost:8000');
 
@@ -455,17 +456,17 @@ class ApiClientOfflineFirst {
 
   /// Handle sync complete callback
   void _handleSyncComplete(SyncResult result) {
-    print('Sync complete: $result');
+    AppLogger.debug('Sync complete: $result');
 
     if (result.conflicts > 0) {
       // Notify user about conflicts
-      print('Warning: ${result.conflicts} conflicts need review');
+      AppLogger.debug('Warning: ${result.conflicts} conflicts need review');
     }
   }
 
   /// Handle sync error callback
   void _handleSyncError(String error) {
-    print('Sync error: $error');
+    AppLogger.debug('Sync error: $error');
   }
 
   // ========== Legacy Compatibility (for gradual migration) ==========
@@ -492,7 +493,7 @@ class ApiClientOfflineFirst {
   Future<Map<String, dynamic>> uploadVision(
     String filename,
     List<int> bytes, {
-    String description = "",
+    String description = '',
   }) async {
     final token = await getToken();
     if (token == null) throw Exception('Not authenticated');

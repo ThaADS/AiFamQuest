@@ -46,14 +46,20 @@ class HelperInvite {
       inviterName: json['inviter_name'] ?? '',
       helperName: json['helper_name'] ?? '',
       helperEmail: json['helper_email'] ?? '',
-      startDate: DateTime.parse(json['start_date'] ?? DateTime.now().toIso8601String()),
-      endDate: DateTime.parse(json['end_date'] ?? DateTime.now().add(Duration(days: 30)).toIso8601String()),
-      expiresAt: DateTime.parse(json['expires_at'] ?? DateTime.now().add(Duration(days: 7)).toIso8601String()),
+      startDate: DateTime.parse(
+          json['start_date'] ?? DateTime.now().toIso8601String()),
+      endDate: DateTime.parse(json['end_date'] ??
+          DateTime.now().add(const Duration(days: 30)).toIso8601String()),
+      expiresAt: DateTime.parse(json['expires_at'] ??
+          DateTime.now().add(const Duration(days: 7)).toIso8601String()),
       permissions: json['permissions'] != null
-          ? HelperPermissions.fromJson(json['permissions'] as Map<String, dynamic>)
+          ? HelperPermissions.fromJson(
+              json['permissions'] as Map<String, dynamic>)
           : HelperPermissions(),
       isActive: json['is_active'] ?? true,
-      acceptedAt: json['accepted_at'] != null ? DateTime.parse(json['accepted_at']) : null,
+      acceptedAt: json['accepted_at'] != null
+          ? DateTime.parse(json['accepted_at'])
+          : null,
     );
   }
 
@@ -81,7 +87,10 @@ class HelperInvite {
   /// Check if helper access period is active
   bool get isAccessActive {
     final now = DateTime.now();
-    return now.isAfter(startDate) && now.isBefore(endDate) && isActive && !isExpired;
+    return now.isAfter(startDate) &&
+        now.isBefore(endDate) &&
+        isActive &&
+        !isExpired;
   }
 
   /// Get days remaining until expiry
@@ -163,11 +172,14 @@ class HelperUser {
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       avatar: json['avatar'],
-      activeUntil: DateTime.parse(json['active_until'] ?? DateTime.now().add(Duration(days: 30)).toIso8601String()),
+      activeUntil: DateTime.parse(json['active_until'] ??
+          DateTime.now().add(const Duration(days: 30)).toIso8601String()),
       tasksAssigned: json['tasks_assigned'] ?? 0,
-      lastSeen: json['last_seen'] != null ? DateTime.parse(json['last_seen']) : null,
+      lastSeen:
+          json['last_seen'] != null ? DateTime.parse(json['last_seen']) : null,
       permissions: json['permissions'] != null
-          ? HelperPermissions.fromJson(json['permissions'] as Map<String, dynamic>)
+          ? HelperPermissions.fromJson(
+              json['permissions'] as Map<String, dynamic>)
           : HelperPermissions(),
     );
   }

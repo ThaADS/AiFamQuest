@@ -292,7 +292,6 @@ class _RRuleBuilderState extends State<RRuleBuilder> {
             RadioListTile<String>(
               title: const Text('Never'),
               value: 'never',
-              groupValue: _endCondition,
               onChanged: (value) {
                 setState(() {
                   _endCondition = value!;
@@ -336,7 +335,6 @@ class _RRuleBuilderState extends State<RRuleBuilder> {
                 ],
               ),
               value: 'count',
-              groupValue: _endCondition,
               onChanged: (value) {
                 setState(() {
                   _endCondition = value!;
@@ -374,7 +372,6 @@ class _RRuleBuilderState extends State<RRuleBuilder> {
                 ],
               ),
               value: 'until',
-              groupValue: _endCondition,
               onChanged: (value) {
                 setState(() {
                   _endCondition = value!;

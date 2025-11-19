@@ -10,6 +10,7 @@
 /// - Celebration animation
 
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 import '../models/gamification_models.dart';
 
 class BadgeUnlockAnimation extends StatefulWidget {
@@ -29,11 +30,10 @@ class BadgeUnlockAnimation extends StatefulWidget {
 class _BadgeUnlockAnimationState extends State<BadgeUnlockAnimation>
     with TickerProviderStateMixin {
   late AnimationController _scaleController;
-  late AnimationController _sparkleController;
   late AnimationController _fadeController;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _sparkleAnimation;
   late Animation<double> _fadeAnimation;
+  late ConfettiController _confettiController;
 
   @override
   void initState() {
@@ -50,17 +50,6 @@ class _BadgeUnlockAnimationState extends State<BadgeUnlockAnimation>
       curve: Curves.elasticOut,
     );
 
-    // Sparkle animation
-    _sparkleController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
-
-    _sparkleAnimation = CurvedAnimation(
-      parent: _sparkleController,
-      curve: Curves.easeInOut,
-    );
-
     // Fade animation for text
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 600),
@@ -72,9 +61,14 @@ class _BadgeUnlockAnimationState extends State<BadgeUnlockAnimation>
       curve: Curves.easeIn,
     );
 
+    // Confetti controller
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
+
     // Start animations
     _scaleController.forward();
-    _sparkleController.repeat();
+    _confettiController.play();
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) _fadeController.forward();
     });
@@ -88,8 +82,8 @@ class _BadgeUnlockAnimationState extends State<BadgeUnlockAnimation>
   @override
   void dispose() {
     _scaleController.dispose();
-    _sparkleController.dispose();
     _fadeController.dispose();
+    _confettiController.dispose();
     super.dispose();
   }
 
@@ -110,18 +104,24 @@ class _BadgeUnlockAnimationState extends State<BadgeUnlockAnimation>
         elevation: 0,
         child: Stack(
           children: [
-            // Sparkle effect background
-            Positioned.fill(
-              child: AnimatedBuilder(
-                animation: _sparkleController,
-                builder: (context, child) {
-                  return CustomPaint(
-                    painter: SparklePainter(
-                      _sparkleAnimation.value,
-                      widget.badge.color,
-                    ),
-                  );
-                },
+            // Confetti effect
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: _confettiController,
+                blastDirectionality: BlastDirectionality.explosive,
+                particleDrag: 0.05,
+                emissionFrequency: 0.05,
+                numberOfParticles: 50,
+                gravity: 0.1,
+                shouldLoop: false,
+                colors: [
+                  widget.badge.color,
+                  widget.badge.color.withValues(alpha: 0.8),
+                  Colors.white,
+                  Colors.amber,
+                  Colors.orange,
+                ],
               ),
             ),
 
@@ -234,64 +234,4 @@ class _BadgeUnlockAnimationState extends State<BadgeUnlockAnimation>
     ];
     return messages[widget.badge.code.hashCode % messages.length];
   }
-}
-
-/// Sparkle painter for celebration effect
-class SparklePainter extends CustomPainter {
-  final double progress;
-  final Color color;
-
-  SparklePainter(this.progress, this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color.withValues(alpha: 0.6)
-      ..style = PaintingStyle.fill;
-
-    final centerX = size.width / 2;
-    final centerY = size.height / 2;
-
-    // Draw sparkle particles
-    for (int i = 0; i < 20; i++) {
-      final angle = (6.28 / 20) * i;
-      final distance = 100 * progress;
-      final x = centerX + distance * (angle.cos);
-      final y = centerY + distance * (angle.sin);
-
-      // Fade out as they move away
-      final opacity = (1 - progress).clamp(0.0, 1.0);
-      paint.color = color.withOpacity(opacity * 0.6);
-
-      // Draw sparkle star
-      _drawStar(canvas, Offset(x, y), 6 * (1 - progress * 0.5), paint);
-    }
-  }
-
-  void _drawStar(Canvas canvas, Offset center, double size, Paint paint) {
-    final path = Path();
-    for (int i = 0; i < 5; i++) {
-      final angle = (6.28 / 5) * i - 1.57;
-      final x = center.dx + size * angle.cos;
-      final y = center.dy + size * angle.sin;
-      if (i == 0) {
-        path.moveTo(x, y);
-      } else {
-        path.lineTo(x, y);
-      }
-    }
-    path.close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(SparklePainter oldDelegate) {
-    return oldDelegate.progress != progress;
-  }
-}
-
-// Extension for trigonometric functions
-extension on double {
-  double get sin => this * 0.017453292519943295;
-  double get cos => (this - 90) * 0.017453292519943295;
 }

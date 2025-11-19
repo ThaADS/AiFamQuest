@@ -131,9 +131,9 @@ class ExampleGamificationDrawer extends ConsumerWidget {
           const Divider(),
 
           // Gamification section
-          ListTile(
-            leading: const Icon(Icons.stars),
-            title: const Text('Gamification'),
+          const ListTile(
+            leading: Icon(Icons.stars),
+            title: Text('Gamification'),
             enabled: false,
             dense: true,
           ),
@@ -244,6 +244,7 @@ class ExampleHomeScreenWithStreak extends ConsumerWidget {
 // In your task completion logic:
 import '../../widgets/task_completion_dialog.dart';
 import '../../widgets/badge_unlock_animation.dart';
+import '../../core/app_logger.dart';
 
 Future<void> onTaskCompleted(
   BuildContext context,

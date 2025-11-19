@@ -273,16 +273,16 @@ void main() {
         (WidgetTester tester) async {
       // Test sync indicator widget with different states
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: Column(
               children: [
                 // Synced state
-                const Icon(Icons.cloud_done, key: Key('sync_done')),
+                Icon(Icons.cloud_done, key: Key('sync_done')),
                 // Pending state
-                const Icon(Icons.cloud_upload, key: Key('sync_pending')),
+                Icon(Icons.cloud_upload, key: Key('sync_pending')),
                 // Error state
-                const Icon(Icons.cloud_off, key: Key('sync_error')),
+                Icon(Icons.cloud_off, key: Key('sync_error')),
               ],
             ),
           ),

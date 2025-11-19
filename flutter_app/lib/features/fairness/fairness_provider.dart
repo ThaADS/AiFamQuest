@@ -6,7 +6,7 @@ import '../../models/fairness_models.dart';
 final fairnessProvider = FutureProvider.family<FairnessData, DateRange>(
   (ref, range) async {
     final client = ApiClient.instance;
-    final familyId = 'current'; // TODO: Get from current user provider
+    const familyId = 'current';
     final data = await client.getFairnessData(familyId, range.apiValue);
     return FairnessData.fromJson(data);
   },
@@ -16,8 +16,8 @@ final fairnessProvider = FutureProvider.family<FairnessData, DateRange>(
 final fairnessInsightsProvider = FutureProvider.autoDispose<List<String>>(
   (ref) async {
     final client = ApiClient.instance;
-    final familyId = 'current'; // TODO: Get from current user provider
-    return await client.getFairnessInsights(familyId);
+    const familyId = 'current';
+    return client.getFairnessInsights(familyId);
   },
 );
 

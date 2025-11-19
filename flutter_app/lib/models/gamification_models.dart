@@ -54,6 +54,40 @@ class UserStreak {
   }
 }
 
+/// Badge rarity levels
+enum BadgeRarity {
+  common,
+  rare,
+  epic,
+  legendary;
+
+  String get displayName {
+    switch (this) {
+      case BadgeRarity.common:
+        return 'Common';
+      case BadgeRarity.rare:
+        return 'Rare';
+      case BadgeRarity.epic:
+        return 'Epic';
+      case BadgeRarity.legendary:
+        return 'Legendary';
+    }
+  }
+
+  Color get color {
+    switch (this) {
+      case BadgeRarity.common:
+        return Colors.grey;
+      case BadgeRarity.rare:
+        return Colors.blue;
+      case BadgeRarity.epic:
+        return Colors.purple;
+      case BadgeRarity.legendary:
+        return Colors.orange;
+    }
+  }
+}
+
 /// Badge definition with unlock criteria
 class BadgeDefinition {
   final String code;
@@ -92,6 +126,31 @@ class BadgeDefinition {
     if (code == 'early_bird') return Colors.yellow;
     if (code == 'night_owl') return Colors.indigo;
     return Colors.grey;
+  }
+
+  /// Get badge rarity for code
+  static BadgeRarity getRarityForCode(String code) {
+    // Legendary badges
+    if (code == 'streak_100' || code == 'points_10000' || code == 'tasks_1000') {
+      return BadgeRarity.legendary;
+    }
+    // Epic badges
+    if (code.startsWith('streak_30') ||
+        code.startsWith('points_5000') ||
+        code.startsWith('tasks_500') ||
+        code.startsWith('category_master_')) {
+      return BadgeRarity.epic;
+    }
+    // Rare badges
+    if (code.startsWith('streak_7') ||
+        code.startsWith('points_1000') ||
+        code.startsWith('tasks_100') ||
+        code == 'perfectionist' ||
+        code == 'speed_demon') {
+      return BadgeRarity.rare;
+    }
+    // Common badges (first_task, early_bird, night_owl, etc.)
+    return BadgeRarity.common;
   }
 }
 
@@ -139,6 +198,7 @@ class UserBadge {
 
   IconData get icon => BadgeDefinition.getIconForCode(code);
   Color get color => BadgeDefinition.getColorForCode(code);
+  BadgeRarity get rarity => BadgeDefinition.getRarityForCode(code);
 }
 
 /// Badge progress (toward unlocking)
@@ -184,6 +244,7 @@ class BadgeProgress {
   double get progress => target > 0 ? (current / target).clamp(0.0, 1.0) : 0.0;
   IconData get icon => BadgeDefinition.getIconForCode(code);
   Color get color => BadgeDefinition.getColorForCode(code);
+  BadgeRarity get rarity => BadgeDefinition.getRarityForCode(code);
 }
 
 /// Points transaction history entry
@@ -387,6 +448,86 @@ class TaskRewardPreview {
 
   bool get hasStreakBonus => streakBonus > 0;
   bool get hasPotentialBadges => potentialBadges.isNotEmpty;
+}
+
+/// Streak history data point (single day)
+class StreakHistoryDay {
+  final DateTime date;
+  final int tasksCompleted;
+  final bool isStreakDay;
+  final bool isToday;
+
+  StreakHistoryDay({
+    required this.date,
+    required this.tasksCompleted,
+    required this.isStreakDay,
+    this.isToday = false,
+  });
+
+  factory StreakHistoryDay.fromJson(Map<String, dynamic> json) {
+    return StreakHistoryDay(
+      date: DateTime.parse(json['date']),
+      tasksCompleted: json['tasks_completed'] ?? json['tasksCompleted'] ?? 0,
+      isStreakDay: json['is_streak_day'] ?? json['isStreakDay'] ?? false,
+      isToday: json['is_today'] ?? json['isToday'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'date': date.toIso8601String(),
+      'tasks_completed': tasksCompleted,
+      'is_streak_day': isStreakDay,
+      'is_today': isToday,
+    };
+  }
+}
+
+/// Streak history (30-day overview)
+class StreakHistory {
+  final String userId;
+  final List<StreakHistoryDay> days;
+  final int currentStreak;
+  final int longestStreak;
+  final int totalDaysWithTasks;
+  final int streakSaveCount;
+
+  StreakHistory({
+    required this.userId,
+    required this.days,
+    required this.currentStreak,
+    required this.longestStreak,
+    this.totalDaysWithTasks = 0,
+    this.streakSaveCount = 0,
+  });
+
+  factory StreakHistory.fromJson(Map<String, dynamic> json) {
+    return StreakHistory(
+      userId: json['user_id'] ?? json['userId'] ?? '',
+      days: json['days'] != null
+          ? (json['days'] as List)
+              .map((d) => StreakHistoryDay.fromJson(d))
+              .toList()
+          : [],
+      currentStreak: json['current_streak'] ?? json['currentStreak'] ?? 0,
+      longestStreak: json['longest_streak'] ?? json['longestStreak'] ?? 0,
+      totalDaysWithTasks:
+          json['total_days_with_tasks'] ?? json['totalDaysWithTasks'] ?? 0,
+      streakSaveCount:
+          json['streak_save_count'] ?? json['streakSaveCount'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'user_id': userId,
+      'days': days.map((d) => d.toJson()).toList(),
+      'current_streak': currentStreak,
+      'longest_streak': longestStreak,
+      'total_days_with_tasks': totalDaysWithTasks,
+      'streak_save_count': streakSaveCount,
+    };
+  }
 }
 
 /// Complete gamification profile

@@ -1,0 +1,32 @@
+{
+  "app_name": "FamQuest",
+  "navigation": {
+    "home": "Accueil",
+    "calendar": "Calendrier",
+    "tasks": "Tâches",
+    "shop": "Boutique",
+    "gamification": "Jeux",
+    "settings": "Paramètres"
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "S'enregistrer",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "create_account": "Créer un compte"
+  },
+  "tasks": {
+    "create_task": "Créer une tâche",
+    "edit_task": "Modifier la tâche",
+    "complete_task": "Terminer la tâche",
+    "my_tasks": "Mes tâches",
+    "no_tasks": "Aucune tâche"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "loading": "Chargement..."
+  }
+}

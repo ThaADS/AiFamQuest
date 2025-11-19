@@ -58,18 +58,17 @@
 
   <!-- Flutter app will mount here -->
   <script>
-    window.addEventListener('load', function(ev) {
-      // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        }
-      }).then(function(engineInitializer) {
+    window.addEventListener('load', function (ev) {
+      // Download main.dart.js without service worker (avoid cache issues locally)
+      _flutter.loader.loadEntrypoint().then(function (engineInitializer) {
         return engineInitializer.initializeEngine();
-      }).then(function(appRunner) {
-        // Hide loading indicator
+      }).then(function (appRunner) {
         document.getElementById('loading').style.display = 'none';
         return appRunner.runApp();
+      }).catch(function (err) {
+        console.error('Flutter init failed', err);
+        const loading = document.getElementById('loading');
+        loading.innerText = 'Failed to load app. Check console.';
       });
     });
   </script>

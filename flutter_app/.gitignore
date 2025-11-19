@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment files (keep .env.example only)
+.env
+.env.*
+!.env.example
+
+# Secrets directory
+secrets/

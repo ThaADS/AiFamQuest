@@ -176,7 +176,7 @@ class TaskGenerator:
             and_(
                 models.TaskLog.taskId == template_id,
                 models.TaskLog.action == "generated",
-                models.TaskLog.metadata["occurrence_date"].astext == occurrence_date.isoformat()
+                models.TaskLog.meta["occurrence_date"].astext == occurrence_date.isoformat()
             )
         ).first()
 
@@ -197,7 +197,7 @@ class TaskGenerator:
             and_(
                 models.TaskLog.taskId == template_id,
                 models.TaskLog.action == "skipped",
-                models.TaskLog.metadata["occurrence_date"].astext == occurrence_date.isoformat()
+                models.TaskLog.meta["occurrence_date"].astext == occurrence_date.isoformat()
             )
         ).first()
 
@@ -268,7 +268,7 @@ class TaskGenerator:
             taskId=template.id,  # Log against template
             userId=template.createdBy,
             action="generated",
-            metadata={
+            meta={
                 "occurrence_date": occurrence_date.isoformat(),
                 "instance_id": task_instance.id,
                 "assignee_id": assignee_id,
@@ -441,13 +441,13 @@ class TaskGenerator:
                     and_(
                         models.TaskLog.taskId == template.id,
                         models.TaskLog.action == "generated",
-                        models.TaskLog.metadata["occurrence_date"].astext == occurrence_date.isoformat()
+                        models.TaskLog.meta["occurrence_date"].astext == occurrence_date.isoformat()
                     )
                 ).first()
 
-                if log and log.metadata.get("instance_id"):
+                if log and log.meta.get("instance_id"):
                     instance = self.db.query(models.Task).filter_by(
-                        id=log.metadata["instance_id"]
+                        id=log.meta["instance_id"]
                     ).first()
 
             occurrences.append({

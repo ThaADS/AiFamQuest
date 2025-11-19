@@ -240,6 +240,22 @@ class _BadgeCatalogScreenState extends State<BadgeCatalogScreen> {
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: badge.rarity.color.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: badge.rarity.color, width: 1),
+                ),
+                child: Text(
+                  badge.rarity.displayName,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: badge.rarity.color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 4),
               Text(
                 'Unlocked ${_formatDate(badge.awardedAt)}',
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -303,6 +319,22 @@ class _BadgeCatalogScreenState extends State<BadgeCatalogScreen> {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: progress.rarity.color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: progress.rarity.color.withValues(alpha: 0.5), width: 1),
+                ),
+                child: Text(
+                  progress.rarity.displayName,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: progress.rarity.color.withValues(alpha: 0.7),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               const SizedBox(height: 8),
               Column(

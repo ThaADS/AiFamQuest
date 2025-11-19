@@ -155,7 +155,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.leaderboard, size: 64, color: colorScheme.secondary),
+              Icon(Icons.leaderboard, size: 64, color: colorScheme.error),
               const SizedBox(height: 16),
               Text('No leaderboard yet',
                   style: theme.textTheme.titleMedium),
@@ -173,13 +173,166 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   }
 
   Widget _buildLeaderboard(ThemeData theme, ColorScheme colorScheme) {
-    return ListView.builder(
+    // Split top 3 and rest
+    final top3 = _entries.take(3).toList();
+    final rest = _entries.length > 3 ? _entries.skip(3).toList() : <LeaderboardEntry>[];
+
+    return ListView(
       padding: const EdgeInsets.all(16),
-      itemCount: _entries.length,
-      itemBuilder: (context, index) {
-        final entry = _entries[index];
-        return _buildLeaderboardCard(entry, theme, colorScheme);
-      },
+      children: [
+        // Podium for top 3
+        if (top3.isNotEmpty) ...[
+          _buildPodium(top3, theme, colorScheme),
+          const SizedBox(height: 24),
+          const Divider(),
+          const SizedBox(height: 16),
+        ],
+
+        // Rest of the leaderboard
+        ...rest.map((entry) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildLeaderboardCard(entry, theme, colorScheme),
+            )),
+      ],
+    );
+  }
+
+  Widget _buildPodium(
+    List<LeaderboardEntry> top3,
+    ThemeData theme,
+    ColorScheme colorScheme,
+  ) {
+    // Reorder for podium visual: 2nd, 1st, 3rd
+    final podiumOrder = <LeaderboardEntry?>[];
+    if (top3.length > 1) podiumOrder.add(top3[1]); // 2nd place
+    if (top3.isNotEmpty) podiumOrder.add(top3[0]); // 1st place
+    if (top3.length > 2) podiumOrder.add(top3[2]); // 3rd place
+
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: podiumOrder.asMap().entries.map((entry) {
+            final leaderboardEntry = entry.value;
+
+            if (leaderboardEntry == null) {
+              return const SizedBox(width: 100);
+            }
+
+            // Determine actual rank for height and color
+            final rank = leaderboardEntry.rank;
+            final height = rank == 1 ? 140.0 : rank == 2 ? 110.0 : 80.0;
+            final color = rank == 1
+                ? Colors.amber.shade400
+                : rank == 2
+                    ? Colors.grey.shade400
+                    : Colors.orange.shade400;
+
+            return Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Avatar
+                  CircleAvatar(
+                    radius: rank == 1 ? 36 : 28,
+                    backgroundColor: color,
+                    backgroundImage: leaderboardEntry.avatarUrl != null
+                        ? NetworkImage(leaderboardEntry.avatarUrl!)
+                        : null,
+                    child: leaderboardEntry.avatarUrl == null
+                        ? Text(
+                            leaderboardEntry.displayName.isNotEmpty
+                                ? leaderboardEntry.displayName[0].toUpperCase()
+                                : '?',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : null,
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Medal emoji
+                  Text(
+                    leaderboardEntry.rankEmoji,
+                    style: TextStyle(fontSize: rank == 1 ? 40 : 32),
+                  ),
+                  const SizedBox(height: 4),
+
+                  // Name
+                  Text(
+                    leaderboardEntry.displayName,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: leaderboardEntry.isCurrentUser
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+
+                  // Points
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.star, size: 16, color: Colors.amber.shade700),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${leaderboardEntry.points}',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Podium
+                  Container(
+                    height: height,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          color,
+                          color.withValues(alpha: 0.7),
+                        ],
+                      ),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(8),
+                      ),
+                      border: Border.all(
+                        color: leaderboardEntry.isCurrentUser
+                            ? colorScheme.primary
+                            : Colors.transparent,
+                        width: 3,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$rank',
+                        style: theme.textTheme.displaySmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 

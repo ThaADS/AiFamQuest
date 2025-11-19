@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'calendar_provider.dart';
 import '../../widgets/recurrence_dialog.dart';
+import '../../widgets/offline_indicator.dart';
+import '../../widgets/sync_status_widget.dart';
 import '../../services/local_storage.dart';
 
-/// Event create/edit form with validation
+/// Event create/edit form with validation and offline support
 class EventFormScreen extends ConsumerStatefulWidget {
   final CalendarEvent? event; // null for create, populated for edit
   final DateTime? initialDate;
@@ -20,6 +22,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _locationController = TextEditingController();
 
   late DateTime _startDate;
   late TimeOfDay _startTime;
@@ -39,6 +42,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
       // Edit mode
       _titleController.text = widget.event!.title;
       _descriptionController.text = widget.event!.description ?? '';
+      _locationController.text = widget.event!.location ?? '';
       _startDate = widget.event!.startTime;
       _startTime = TimeOfDay.fromDateTime(widget.event!.startTime);
       _endDate = widget.event!.endTime;
@@ -62,6 +66,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -74,10 +79,14 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
       appBar: AppBar(
         title: Text(widget.event == null ? 'New Event' : 'Edit Event'),
         centerTitle: true,
+        actions: const [
+          SyncStatusWidget(),
+        ],
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
+      body: OfflineIndicator(
+        child: Form(
+          key: _formKey,
+          child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
             // Title field
@@ -111,6 +120,20 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
               ),
               maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
+            ),
+
+            const SizedBox(height: 16),
+
+            // Location field
+            TextFormField(
+              controller: _locationController,
+              decoration: const InputDecoration(
+                labelText: 'Location',
+                hintText: 'Where is this event? (optional)',
+                prefixIcon: Icon(Icons.location_on),
+                border: OutlineInputBorder(),
+              ),
+              textCapitalization: TextCapitalization.words,
             ),
 
             const SizedBox(height: 24),
@@ -203,6 +226,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
 
             const SizedBox(height: 80), // Space for FAB
           ],
+        ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -409,7 +433,6 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
   }
 
   Future<List<Map<String, dynamic>>> _loadFamilyMembers() async {
-    // TODO: Load from API/storage
     // Mock data for now
     return [
       {'id': 'user1', 'name': 'John'},
@@ -457,7 +480,7 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final user = await LocalStorage.instance.getCurrentUser();
+      final user = await FamQuestStorage.instance.getCurrentUser();
       final userId = user?['id'] as String? ?? 'unknown';
 
       final event = CalendarEvent(
@@ -467,6 +490,9 @@ class _EventFormScreenState extends ConsumerState<EventFormScreen> {
         description: _descriptionController.text.trim().isEmpty
             ? null
             : _descriptionController.text.trim(),
+        location: _locationController.text.trim().isEmpty
+            ? null
+            : _locationController.text.trim(),
         startTime: startDateTime,
         endTime: endDateTime,
         isAllDay: _isAllDay,

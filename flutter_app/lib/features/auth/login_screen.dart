@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -101,11 +102,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isIOS = Platform.isIOS;
+    final isIOS = !kIsWeb && Platform.isIOS;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inloggen'),
+        title: const Text('AiFamQuest - Inloggen'),
         centerTitle: true,
       ),
       body: Center(
@@ -123,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'FamQuest',
+                'AiFamQuest',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.headlineLarge?.copyWith(
                   fontWeight: FontWeight.bold,
@@ -217,12 +218,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Demo Mode Button (bypasses backend)
               OutlinedButton.icon(
-                onPressed: _busy
-                    ? null
-                    : () {
-                        // Direct login without backend for testing
-                        context.go('/home');
-                      },
+                onPressed: () {
+                  // Direct login without backend for testing
+                  debugPrint('🧪 Demo Mode: Navigating to /home');
+                  try {
+                    context.go('/home');
+                    debugPrint('✅ Demo Mode: Navigation successful');
+                  } catch (e) {
+                    debugPrint('❌ Demo Mode: Navigation failed: $e');
+                  }
+                },
                 icon: const Icon(Icons.science),
                 label: const Text('Demo Mode (Offline Test)'),
                 style: OutlinedButton.styleFrom(

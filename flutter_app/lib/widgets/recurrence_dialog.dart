@@ -41,7 +41,6 @@ class _RecurrenceDialogState extends State<RecurrenceDialog> {
             // None option
             RadioListTile<String>(
               value: 'none',
-              groupValue: _frequency,
               onChanged: (value) => setState(() => _frequency = value!),
               title: const Text('Does not repeat'),
               dense: true,
@@ -52,7 +51,6 @@ class _RecurrenceDialogState extends State<RecurrenceDialog> {
             // Daily option
             RadioListTile<String>(
               value: 'daily',
-              groupValue: _frequency,
               onChanged: (value) => setState(() => _frequency = value!),
               title: const Text('Daily'),
               subtitle: const Text('Repeats every day'),
@@ -62,7 +60,6 @@ class _RecurrenceDialogState extends State<RecurrenceDialog> {
             // Weekly option
             RadioListTile<String>(
               value: 'weekly',
-              groupValue: _frequency,
               onChanged: (value) => setState(() => _frequency = value!),
               title: const Text('Weekly'),
               subtitle: _frequency == 'weekly'
@@ -96,7 +93,6 @@ class _RecurrenceDialogState extends State<RecurrenceDialog> {
             // Monthly option
             RadioListTile<String>(
               value: 'monthly',
-              groupValue: _frequency,
               onChanged: (value) => setState(() => _frequency = value!),
               title: const Text('Monthly'),
               subtitle: const Text('Same day each month'),
@@ -116,7 +112,7 @@ class _RecurrenceDialogState extends State<RecurrenceDialog> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, size: 16, color: colorScheme.primary),
+                    Icon(Icons.info_outline, size: 16, color: colorScheme.error),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(

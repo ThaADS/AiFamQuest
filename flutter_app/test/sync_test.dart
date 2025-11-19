@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../lib/services/local_storage.dart';
-import '../lib/services/sync_queue.dart';
-import '../lib/services/conflict_resolver.dart';
+import 'package:famquest_v9/services/local_storage.dart';
+import 'package:famquest_v9/services/sync_queue.dart';
+import 'package:famquest_v9/services/conflict_resolver.dart';
 
 /// Comprehensive test suite for offline-first sync architecture
 /// 50+ scenarios covering conflict resolution, sync queue, and local storage
@@ -646,10 +646,10 @@ void main() {
   });
 
   group('LocalStorage Tests', () {
-    late LocalStorage localStorage;
+    late FamQuestStorage localStorage;
 
     setUp(() async {
-      localStorage = LocalStorage.instance;
+      localStorage = FamQuestStorage.instance;
       await localStorage.init();
       await localStorage.clearAll();
     });
@@ -802,12 +802,12 @@ void main() {
   });
 
   group('Integration Tests', () {
-    late LocalStorage localStorage;
+    late FamQuestStorage localStorage;
     late SyncQueue syncQueue;
     late ConflictResolver resolver;
 
     setUp(() async {
-      localStorage = LocalStorage.instance;
+      localStorage = FamQuestStorage.instance;
       syncQueue = SyncQueue.instance;
       resolver = ConflictResolver.instance;
 
@@ -956,11 +956,11 @@ void main() {
   // Additional 10+ scenarios for edge cases
   group('Edge Case Tests', () {
     late ConflictResolver resolver;
-    late LocalStorage localStorage;
+    late FamQuestStorage localStorage;
 
     setUp(() async {
       resolver = ConflictResolver.instance;
-      localStorage = LocalStorage.instance;
+      localStorage = FamQuestStorage.instance;
       await localStorage.init();
       await localStorage.clearAll();
     });

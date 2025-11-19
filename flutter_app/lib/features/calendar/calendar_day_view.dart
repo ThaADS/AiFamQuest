@@ -26,7 +26,7 @@ class _CalendarDayViewState extends ConsumerState<CalendarDayView> {
     // Scroll to current hour
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final now = DateTime.now();
-      final hourHeight = 60.0;
+      const hourHeight = 60.0;
       final scrollTo = (now.hour * hourHeight) - 100;
       if (_scrollController.hasClients) {
         _scrollController.jumpTo(scrollTo.clamp(
@@ -214,7 +214,7 @@ class _CalendarDayViewState extends ConsumerState<CalendarDayView> {
                 ),
               ),
               if (event.recurrence != null)
-                Icon(Icons.repeat, size: 14, color: theme.colorScheme.secondary),
+                Icon(Icons.repeat, size: 14, color: theme.colorScheme.error),
             ],
           ),
         ),
@@ -225,7 +225,7 @@ class _CalendarDayViewState extends ConsumerState<CalendarDayView> {
   Widget _buildTimeline(BuildContext context, List<CalendarEvent> events) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final hourHeight = 60.0;
+    const hourHeight = 60.0;
 
     return SingleChildScrollView(
       controller: _scrollController,

@@ -3,8 +3,10 @@
 /// Shows all recurring task series with pause/delete actions
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../models/recurring_task_models.dart';
 import '../../api/client.dart';
+import '../../widgets/rrule_display.dart';
 import 'recurring_task_form.dart';
 import 'occurrence_detail_screen.dart';
 
@@ -85,6 +87,25 @@ class _RecurringTaskListScreenState extends State<RecurringTaskListScreen> {
     }
   }
 
+  Future<DateTime?> _getNextOccurrence(String taskId) async {
+    try {
+      final occurrences = await ApiClient.instance.getOccurrences(taskId);
+      if (occurrences.isEmpty) return null;
+
+      // Find first open occurrence
+      for (final occ in occurrences) {
+        final occurrence = Occurrence.fromJson(occ);
+        if (occurrence.status == OccurrenceStatus.open &&
+            occurrence.scheduledAt.isAfter(DateTime.now())) {
+          return occurrence.scheduledAt;
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> _deleteTask(RecurringTask task) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -159,121 +180,193 @@ class _RecurringTaskListScreenState extends State<RecurringTaskListScreen> {
                     itemCount: _tasks.length,
                     itemBuilder: (context, index) {
                       final task = _tasks[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    OccurrenceDetailScreen(task: task),
-                              ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(task.category.icon,
-                                        color: task.category.color),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        task.title,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.copyWith(
-                                                fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    if (task.isPaused)
-                                      const Chip(
-                                        label: Text('Paused'),
-                                        backgroundColor: Colors.orange,
-                                        labelStyle: TextStyle(
-                                            color: Colors.white, fontSize: 12),
-                                      ),
-                                  ],
+                      return Dismissible(
+                        key: Key(task.id),
+                        direction: DismissDirection.endToStart,
+                        confirmDismiss: (direction) async {
+                          return showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Delete Task'),
+                              content: const Text(
+                                  'Delete this recurring task and all future occurrences?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: const Text('Cancel'),
                                 ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.schedule, size: 16),
-                                    const SizedBox(width: 4),
-                                    Text(task.humanReadablePattern),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Icon(task.rotationStrategy.icon, size: 16),
-                                    const SizedBox(width: 4),
-                                    Text(task.rotationStrategy.displayName),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.star,
-                                            size: 16, color: Colors.amber),
-                                        const SizedBox(width: 4),
-                                        Text('${task.points} pts'),
-                                        const SizedBox(width: 12),
-                                        if (task.photoRequired)
-                                          const Icon(Icons.camera_alt,
-                                              size: 16),
-                                        if (task.parentApproval)
-                                          const Icon(Icons.verified_user,
-                                              size: 16),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          onPressed: () async {
-                                            final result =
-                                                await Navigator.of(context)
-                                                    .push(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    RecurringTaskFormScreen(
-                                                        existingTask: task),
-                                              ),
-                                            );
-                                            if (result == true) _loadTasks();
-                                          },
-                                          icon: const Icon(Icons.edit),
-                                          tooltip: 'Edit',
-                                        ),
-                                        IconButton(
-                                          onPressed: () => task.isPaused
-                                              ? _resumeTask(task)
-                                              : _pauseTask(task),
-                                          icon: Icon(task.isPaused
-                                              ? Icons.play_arrow
-                                              : Icons.pause),
-                                          tooltip: task.isPaused
-                                              ? 'Resume'
-                                              : 'Pause',
-                                        ),
-                                        IconButton(
-                                          onPressed: () => _deleteTask(task),
-                                          icon: const Icon(Icons.delete),
-                                          tooltip: 'Delete',
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                FilledButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                  style: FilledButton.styleFrom(
+                                      backgroundColor: Colors.red),
+                                  child: const Text('Delete'),
                                 ),
                               ],
+                            ),
+                          );
+                        },
+                        onDismissed: (direction) => _deleteTask(task),
+                        background: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.only(right: 20),
+                          child: const Icon(Icons.delete, color: Colors.white),
+                        ),
+                        child: Card(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      OccurrenceDetailScreen(task: task),
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(task.category.icon,
+                                          color: task.category.color),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          task.title,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                  fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      if (task.isPaused)
+                                        const Chip(
+                                          label: Text('Paused'),
+                                          backgroundColor: Colors.orange,
+                                          labelStyle: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12),
+                                        ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  // RRULE display using helper widget
+                                  RRuleChip(rrule: task.rrule),
+                                  const SizedBox(height: 8),
+                                  // Next occurrence
+                                  FutureBuilder<DateTime?>(
+                                    future: _getNextOccurrence(task.id),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData &&
+                                          snapshot.data != null) {
+                                        final next = snapshot.data!;
+                                        return Row(
+                                          children: [
+                                            const Icon(Icons.calendar_today,
+                                                size: 14),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              'Next: ${DateFormat('EEE, MMM d').format(next)}',
+                                              style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontStyle: FontStyle.italic),
+                                            ),
+                                          ],
+                                        );
+                                      }
+                                      return const SizedBox.shrink();
+                                    },
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Icon(task.rotationStrategy.icon,
+                                          size: 16),
+                                      const SizedBox(width: 4),
+                                      Text(task.rotationStrategy.displayName,
+                                          style: const TextStyle(fontSize: 12)),
+                                    ],
+                                  ),
+                                  // Assignees display
+                                  if (task.assigneeIds.isNotEmpty) ...[
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.people, size: 16),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '${task.assigneeIds.length} assignee${task.assigneeIds.length > 1 ? 's' : ''}',
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.star,
+                                              size: 16, color: Colors.amber),
+                                          const SizedBox(width: 4),
+                                          Text('${task.points} pts'),
+                                          const SizedBox(width: 12),
+                                          if (task.photoRequired)
+                                            const Icon(Icons.camera_alt,
+                                                size: 16),
+                                          if (task.parentApproval)
+                                            const Icon(Icons.verified_user,
+                                                size: 16),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () async {
+                                              final result =
+                                                  await Navigator.of(context)
+                                                      .push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      RecurringTaskFormScreen(
+                                                          existingTask: task),
+                                                ),
+                                              );
+                                              if (result == true) _loadTasks();
+                                            },
+                                            icon: const Icon(Icons.edit),
+                                            tooltip: 'Edit',
+                                          ),
+                                          IconButton(
+                                            onPressed: () => task.isPaused
+                                                ? _resumeTask(task)
+                                                : _pauseTask(task),
+                                            icon: Icon(task.isPaused
+                                                ? Icons.play_arrow
+                                                : Icons.pause),
+                                            tooltip: task.isPaused
+                                                ? 'Resume'
+                                                : 'Pause',
+                                          ),
+                                          IconButton(
+                                            onPressed: () => _deleteTask(task),
+                                            icon: const Icon(Icons.delete),
+                                            tooltip: 'Delete',
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

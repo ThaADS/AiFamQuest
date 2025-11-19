@@ -194,7 +194,7 @@ class TestPremiumService:
 
         assert len(logs) == 1
         assert logs[0].action == 'plan_week'
-        assert logs[0].metadata['total_tasks'] == 28
+        assert logs[0].meta['total_tasks'] == 28
 
     def test_can_use_theme_free_user(self, db_session, test_user):
         """Test theme access for free user"""

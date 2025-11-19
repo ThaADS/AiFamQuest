@@ -224,7 +224,7 @@ class _TaskCompletionDialogState extends State<TaskCompletionDialog>
               ),
               Row(
                 children: [
-                  Icon(Icons.star, color: Colors.amber.shade700, size: 24),
+                  const Icon(Icons.star, color: Colors.orange),
                   const SizedBox(width: 4),
                   Text(
                     '+${widget.pointsEarned}',
@@ -286,7 +286,7 @@ class _TaskCompletionDialogState extends State<TaskCompletionDialog>
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.emoji_events, color: Colors.amber.shade700, size: 24),
+              const Icon(Icons.emoji_events, color: Colors.orange),
               const SizedBox(width: 8),
               Text(
                 'New Badge${widget.newBadges.length > 1 ? 's' : ''}!',

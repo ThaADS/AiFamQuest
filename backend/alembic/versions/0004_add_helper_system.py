@@ -9,6 +9,16 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
+# SQLite fallback for JSONB so local sqlite works
+class SQLiteJSONB(sa.types.TypeDecorator):
+    impl = sa.JSON
+    cache_ok = True
+
+
+def jsonb():
+    bind = op.get_bind()
+    return SQLiteJSONB if bind.dialect.name == "sqlite" else postgresql.JSONB
+
 # revision identifiers, used by Alembic.
 revision = '0004'
 down_revision = '0003'
@@ -40,12 +50,12 @@ def upgrade():
         sa.Column('email', sa.String(length=255), nullable=False),
         sa.Column('startDate', sa.DateTime(timezone=True), nullable=False),
         sa.Column('endDate', sa.DateTime(timezone=True), nullable=False),
-        sa.Column('permissions', postgresql.JSONB, nullable=False, server_default='{}'),
+        sa.Column('permissions', jsonb(), nullable=False, server_default='{}'),
         sa.Column('expiresAt', sa.DateTime(timezone=True), nullable=False),
         sa.Column('used', sa.Boolean(), nullable=False, server_default='false'),
         sa.Column('usedAt', sa.DateTime(timezone=True), nullable=True),
         sa.Column('usedById', sa.String(), nullable=True),
-        sa.Column('createdAt', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('now()')),
+        sa.Column('createdAt', sa.DateTime(timezone=True), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
         sa.ForeignKeyConstraint(['familyId'], ['families.id'], ondelete='CASCADE'),
         sa.ForeignKeyConstraint(['createdById'], ['users.id'], ondelete='CASCADE'),
         sa.ForeignKeyConstraint(['usedById'], ['users.id'], ondelete='SET NULL'),

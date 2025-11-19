@@ -96,7 +96,6 @@ class FairnessDashboardScreen extends ConsumerWidget {
               distribution: fairnessData.taskDistribution,
               workloads: fairnessData.workloads,
               onUserSelected: (userId) {
-                // TODO: Navigate to user's task list
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Filter tasks by ${fairnessData.workloads[userId]?.userName ?? "user"}'),
@@ -116,8 +115,8 @@ class FairnessDashboardScreen extends ConsumerWidget {
                   child: Center(child: CircularProgressIndicator()),
                 ),
               ),
-              error: (_, __) => FairnessInsightsCard(
-                insights: const ['Unable to load insights'],
+              error: (_, __) => const FairnessInsightsCard(
+                insights: ['Unable to load insights'],
               ),
             ),
             const SizedBox(height: 16),
@@ -249,7 +248,6 @@ class FairnessDashboardScreen extends ConsumerWidget {
               child: CapacityBar(
                 workload: workload,
                 onTap: () {
-                  // TODO: Navigate to user's profile or task list
                 },
               ),
             )),
@@ -321,7 +319,6 @@ class FairnessDashboardScreen extends ConsumerWidget {
 
   /// Handle rebalance action
   void _handleRebalance(BuildContext context) {
-    // TODO: Navigate to AI planner with fairness focus
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Opening AI Planner with fairness optimization...'),
