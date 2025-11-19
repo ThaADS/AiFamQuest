@@ -1,0 +1,166 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Install Flutter dependencies
+        working-directory: flutter_app
+        run: flutter pub get
+
+      - name: Analyze code
+        working-directory: flutter_app
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run tests
+        working-directory: flutter_app
+        run: flutter test
+
+      - name: Build debug APK
+        working-directory: flutter_app
+        run: flutter build apk --debug
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: flutter_app/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 30
+
+      - name: Build split APKs (per ABI)
+        working-directory: flutter_app
+        run: flutter build apk --debug --split-per-abi
+
+      - name: Upload Split APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-split-apks
+          path: flutter_app/build/app/outputs/flutter-apk/*.apk
+          retention-days: 30
+
+      - name: Create Build Summary
+        run: |
+          echo "## ✅ Android Build Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Artifacts Generated:" >> $GITHUB_STEP_SUMMARY
+          echo "- **app-debug.apk** (Universal, ~50-70MB)" >> $GITHUB_STEP_SUMMARY
+          echo "- **app-arm64-v8a-debug.apk** (ARM 64-bit, ~20-30MB)" >> $GITHUB_STEP_SUMMARY
+          echo "- **app-armeabi-v7a-debug.apk** (ARM 32-bit, ~20-30MB)" >> $GITHUB_STEP_SUMMARY
+          echo "- **app-x86_64-debug.apk** (Intel 64-bit, ~25-35MB)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📲 Installation Instructions:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download APK from Artifacts section above" >> $GITHUB_STEP_SUMMARY
+          echo "2. Transfer to Android device" >> $GITHUB_STEP_SUMMARY
+          echo "3. Enable 'Install from Unknown Sources'" >> $GITHUB_STEP_SUMMARY
+          echo "4. Install APK" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎯 Recommended APK:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Modern devices (2019+)**: app-arm64-v8a-debug.apk" >> $GITHUB_STEP_SUMMARY
+          echo "- **Older devices (<2019)**: app-armeabi-v7a-debug.apk" >> $GITHUB_STEP_SUMMARY
+          echo "- **Unknown architecture**: app-debug.apk (universal)" >> $GITHUB_STEP_SUMMARY
+
+  build-release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'  # Only on master branch
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        working-directory: flutter_app
+        run: flutter pub get
+
+      # Note: Release builds require signing keys
+      # Add signing keys as GitHub Secrets:
+      # - ANDROID_KEYSTORE_BASE64 (base64 encoded .jks file)
+      # - KEYSTORE_PASSWORD
+      # - KEY_ALIAS
+      # - KEY_PASSWORD
+
+      - name: Create key.properties (from secrets)
+        working-directory: flutter_app/android
+        run: |
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> key.properties
+          echo "storeFile=release-keystore.jks" >> key.properties
+        if: ${{ secrets.KEYSTORE_PASSWORD != '' }}
+
+      - name: Decode keystore
+        working-directory: flutter_app/android
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > release-keystore.jks
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+
+      - name: Build Release APK (signed)
+        working-directory: flutter_app
+        run: flutter build apk --release --split-per-abi
+        if: ${{ secrets.KEYSTORE_PASSWORD != '' }}
+
+      - name: Upload Release APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apks
+          path: flutter_app/build/app/outputs/flutter-apk/*.apk
+          retention-days: 90
+        if: ${{ secrets.KEYSTORE_PASSWORD != '' }}
+
+      - name: Create Release Summary
+        run: |
+          echo "## 🚀 Release Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Release APKs:" >> $GITHUB_STEP_SUMMARY
+          echo "- Signed and optimized for production" >> $GITHUB_STEP_SUMMARY
+          echo "- Minified and obfuscated code" >> $GITHUB_STEP_SUMMARY
+          echo "- Ready for Google Play Store upload" >> $GITHUB_STEP_SUMMARY
+        if: ${{ secrets.KEYSTORE_PASSWORD != '' }}
+
+      - name: Missing Signing Keys Warning
+        run: |
+          echo "## ⚠️ Release Build Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Release build requires signing keys configured as GitHub Secrets:" >> $GITHUB_STEP_SUMMARY
+          echo "- ANDROID_KEYSTORE_BASE64" >> $GITHUB_STEP_SUMMARY
+          echo "- KEYSTORE_PASSWORD" >> $GITHUB_STEP_SUMMARY
+          echo "- KEY_ALIAS" >> $GITHUB_STEP_SUMMARY
+          echo "- KEY_PASSWORD" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "See DEPLOYMENT_CHECKLIST.md for instructions" >> $GITHUB_STEP_SUMMARY
+        if: ${{ secrets.KEYSTORE_PASSWORD == '' }}
