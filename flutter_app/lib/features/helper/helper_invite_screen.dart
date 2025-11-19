@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import '../../api/client.dart';
 import '../../models/helper_models.dart';
+import '../../providers/helper_provider.dart';
 
 /// Helper Invite Screen - For parents to invite external help
 ///
@@ -362,7 +364,7 @@ class _HelperInviteScreenState extends ConsumerState<HelperInviteScreen> {
     }
   }
 
-  /// Show invite code dialog
+  /// Show invite code dialog with QR code
   void _showInviteCodeDialog(HelperInvite invite) {
     showDialog(
       context: context,
@@ -375,63 +377,89 @@ class _HelperInviteScreenState extends ConsumerState<HelperInviteScreen> {
             Text('Invite Created'),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Share this code with ${invite.helperName}:',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(12),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Share this code with ${invite.helperName}:',
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
-              child: Column(
-                children: [
-                  Text(
-                    invite.code,
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 8,
-                          color: Theme.of(context).colorScheme.onPrimaryContainer,
-                        ),
+              const SizedBox(height: 20),
+              // PIN code display
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      invite.code,
+                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 8,
+                            color:
+                                Theme.of(context).colorScheme.onPrimaryContainer,
+                          ),
+                    ),
+                    const SizedBox(height: 12),
+                    IconButton(
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: invite.code));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Code copied to clipboard')),
+                        );
+                      },
+                      icon: const Icon(Icons.copy),
+                      tooltip: 'Copy code',
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              // QR Code
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  IconButton(
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: invite.code));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Code copied to clipboard')),
-                      );
-                    },
-                    icon: const Icon(Icons.copy),
-                    tooltip: 'Copy code',
+                  child: QrImageView(
+                    data: invite.code,
+                    version: QrVersions.auto,
+                    size: 200,
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Icon(
+                    Icons.timer,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Valid for ${invite.daysUntilExpiry} days',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Icon(
-                  Icons.timer,
-                  size: 16,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Valid for ${invite.daysUntilExpiry} days',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -445,47 +473,106 @@ class _HelperInviteScreenState extends ConsumerState<HelperInviteScreen> {
 
   /// Build active helpers list
   Widget _buildActiveHelpersList(ThemeData theme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Active Helpers',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-        // TODO: Fetch and display active helpers
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+    return Consumer(
+      builder: (context, ref, child) {
+        final helpersAsync = ref.watch(activeHelpersProvider);
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
               children: [
-                Icon(
-                  Icons.people_outline,
-                  size: 48,
-                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                ),
-                const SizedBox(height: 12),
                 Text(
-                  'No active helpers',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                  'Active Helpers',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Create an invite above to add external help',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  textAlign: TextAlign.center,
+                const Spacer(),
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/helper-management');
+                  },
+                  icon: const Icon(Icons.settings, size: 18),
+                  label: const Text('Manage'),
                 ),
               ],
             ),
-          ),
-        ),
-      ],
+            const SizedBox(height: 16),
+            helpersAsync.when(
+              data: (helpers) => helpers.isEmpty
+                  ? Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.people_outline,
+                              size: 48,
+                              color: theme.colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.5),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'No active helpers',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Create an invite above to add external help',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Column(
+                      children: helpers.take(3).map((helper) {
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8.0),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: theme.colorScheme.primaryContainer,
+                              child: Text(
+                                helper.name.substring(0, 1).toUpperCase(),
+                                style: TextStyle(
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                            ),
+                            title: Text(helper.name),
+                            subtitle: Text(
+                              '${helper.tasksAssigned} tasks • ${helper.daysRemaining} days left',
+                            ),
+                            trailing: Icon(
+                              helper.isActive
+                                  ? Icons.check_circle
+                                  : Icons.access_time,
+                              color: helper.isActive ? Colors.green : Colors.grey,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Error loading helpers: $error',
+                    style: TextStyle(color: theme.colorScheme.error),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

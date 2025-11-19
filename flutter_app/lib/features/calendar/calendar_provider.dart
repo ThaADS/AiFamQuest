@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/local_storage.dart';
+import '../../services/realtime_service.dart';
 import '../../api/client.dart';
 import '../../services/sync_queue.dart';
 import 'package:uuid/uuid.dart';
+import '../../core/app_logger.dart';
 
 /// Calendar event model
 class CalendarEvent {
@@ -16,6 +19,7 @@ class CalendarEvent {
   final List<String> attendees;
   final String category; // school, sport, appointment, family, other
   final String color; // hex color
+  final String? location; // event location (optional)
   final RecurrenceRule? recurrence;
   final bool isDirty;
   final int version;
@@ -33,6 +37,7 @@ class CalendarEvent {
     this.attendees = const [],
     this.category = 'other',
     this.color = '#2196F3',
+    this.location,
     this.recurrence,
     this.isDirty = false,
     this.version = 1,
@@ -52,6 +57,7 @@ class CalendarEvent {
       attendees: (json['attendees'] as List?)?.cast<String>() ?? [],
       category: json['category'] as String? ?? 'other',
       color: json['color'] as String? ?? '#2196F3',
+      location: json['location'] as String?,
       recurrence: json['recurrence'] != null
           ? RecurrenceRule.fromJson(json['recurrence'])
           : null,
@@ -74,6 +80,7 @@ class CalendarEvent {
       'attendees': attendees,
       'category': category,
       'color': color,
+      'location': location,
       'recurrence': recurrence?.toJson(),
       'isDirty': isDirty,
       'version': version,
@@ -91,8 +98,10 @@ class CalendarEvent {
     List<String>? attendees,
     String? category,
     String? color,
+    String? location,
     RecurrenceRule? recurrence,
     bool clearRecurrence = false,
+    bool clearLocation = false,
   }) {
     return CalendarEvent(
       id: id,
@@ -105,6 +114,7 @@ class CalendarEvent {
       attendees: attendees ?? this.attendees,
       category: category ?? this.category,
       color: color ?? this.color,
+      location: clearLocation ? null : (location ?? this.location),
       recurrence: clearRecurrence ? null : (recurrence ?? this.recurrence),
       isDirty: true,
       version: version + 1,
@@ -177,12 +187,14 @@ class CalendarState {
   final bool isLoading;
   final String? error;
   final DateTime focusedDate;
+  final bool isRealtimeConnected;
 
   CalendarState({
     this.events = const [],
     this.isLoading = false,
     this.error,
     required this.focusedDate,
+    this.isRealtimeConnected = false,
   });
 
   CalendarState copyWith({
@@ -190,31 +202,123 @@ class CalendarState {
     bool? isLoading,
     String? error,
     DateTime? focusedDate,
+    bool? isRealtimeConnected,
   }) {
     return CalendarState(
       events: events ?? this.events,
       isLoading: isLoading ?? this.isLoading,
       error: error,
       focusedDate: focusedDate ?? this.focusedDate,
+      isRealtimeConnected: isRealtimeConnected ?? this.isRealtimeConnected,
     );
   }
 }
 
 /// Calendar provider
 class CalendarNotifier extends StateNotifier<CalendarState> {
-  final LocalStorage _localStorage;
+  final FamQuestStorage _localStorage;
   // ignore: unused_field
   final ApiClient _apiClient;
   final SyncQueue _syncQueue;
+  final SupabaseRealtimeService _realtimeService;
+
+  StreamSubscription? _eventUpdateSubscription;
+  StreamSubscription? _connectionStateSubscription;
 
   CalendarNotifier({
-    required LocalStorage localStorage,
+    required FamQuestStorage localStorage,
     required ApiClient apiClient,
     required SyncQueue syncQueue,
+    required SupabaseRealtimeService realtimeService,
   })  : _localStorage = localStorage,
         _apiClient = apiClient,
         _syncQueue = syncQueue,
+        _realtimeService = realtimeService,
         super(CalendarState(focusedDate: DateTime.now()));
+
+  /// Initialize with real-time subscriptions
+  Future<void> initialize() async {
+    // Listen to real-time event updates
+    _eventUpdateSubscription = _realtimeService.eventUpdateStream.listen(
+      (update) => _handleRealtimeUpdate(update),
+    );
+
+    // Listen to connection state changes
+    _connectionStateSubscription = _realtimeService.connectionStateStream.listen(
+      (connectionState) {
+        state = state.copyWith(
+          isRealtimeConnected: connectionState == RealtimeConnectionState.connected,
+        );
+      },
+    );
+  }
+
+  /// Handle real-time updates
+  void _handleRealtimeUpdate(Map<String, dynamic> update) {
+    final type = update['type'] as String;
+    final data = update['data'] as Map<String, dynamic>;
+
+    switch (type) {
+      case 'insert':
+        _handleEventInsert(data);
+        break;
+      case 'update':
+        _handleEventUpdate(data);
+        break;
+      case 'delete':
+        _handleEventDelete(data);
+        break;
+    }
+  }
+
+  /// Handle event insert from real-time
+  void _handleEventInsert(Map<String, dynamic> data) {
+    try {
+      final event = CalendarEvent.fromJson(data);
+
+      // Check if event already exists (avoid duplicates)
+      if (state.events.any((e) => e.id == event.id)) {
+        return;
+      }
+
+      // Add to state
+      state = state.copyWith(
+        events: [...state.events, event],
+      );
+    } catch (e) {
+      AppLogger.debug('[CalendarProvider] Insert error: $e');
+    }
+  }
+
+  /// Handle event update from real-time
+  void _handleEventUpdate(Map<String, dynamic> data) {
+    try {
+      final updatedEvent = CalendarEvent.fromJson(data);
+
+      // Update in state
+      final updatedEvents = state.events.map((event) {
+        return event.id == updatedEvent.id ? updatedEvent : event;
+      }).toList();
+
+      state = state.copyWith(events: updatedEvents);
+    } catch (e) {
+      AppLogger.debug('[CalendarProvider] Update error: $e');
+    }
+  }
+
+  /// Handle event delete from real-time
+  void _handleEventDelete(Map<String, dynamic> data) {
+    try {
+      final eventId = data['id'] as String;
+
+      // Remove from state
+      final updatedEvents = state.events.where((event) => event.id != eventId).toList();
+
+      state = state.copyWith(events: updatedEvents);
+    } catch (e) {
+      AppLogger.debug('[CalendarProvider] Delete error: $e');
+    }
+  }
 
   /// Fetch events for date range
   Future<void> fetchEvents(DateTime start, DateTime end) async {
@@ -260,6 +364,7 @@ class CalendarNotifier extends StateNotifier<CalendarState> {
         attendees: event.attendees,
         category: event.category,
         color: event.color,
+        location: event.location,
         recurrence: event.recurrence,
         isDirty: true,
         version: 1,
@@ -373,14 +478,22 @@ class CalendarNotifier extends StateNotifier<CalendarState> {
   void setFocusedDate(DateTime date) {
     state = state.copyWith(focusedDate: date);
   }
+
+  @override
+  void dispose() {
+    _eventUpdateSubscription?.cancel();
+    _connectionStateSubscription?.cancel();
+    super.dispose();
+  }
 }
 
 /// Provider instances
 final calendarProvider =
     StateNotifierProvider<CalendarNotifier, CalendarState>((ref) {
   return CalendarNotifier(
-    localStorage: LocalStorage.instance,
+    localStorage: FamQuestStorage.instance,
     apiClient: ApiClient.instance,
     syncQueue: SyncQueue.instance,
+    realtimeService: SupabaseRealtimeService.instance,
   );
 });

@@ -297,7 +297,7 @@ class _TwoFASettingsScreenState extends State<TwoFASettingsScreen> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.warning, color: Colors.orange.shade900),
+                          const Icon(Icons.warning, color: Colors.orange),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(
@@ -448,7 +448,7 @@ class _Disable2FADialogState extends State<_Disable2FADialog> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.warning, color: Colors.orange.shade900),
+                  const Icon(Icons.warning, color: Colors.orange),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

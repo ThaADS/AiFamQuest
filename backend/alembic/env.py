@@ -6,7 +6,8 @@ from core.db import Base
 import core.models  # noqa
 config = context.config
 config.set_main_option('sqlalchemy.url', os.getenv('DATABASE_URL','sqlite:///./famquest.db'))
-if config.config_file_name is not None: fileConfig(config.config_file_name)
+# Skip fileConfig when no logging section is defined (ini is minimal for local dev)
+# if config.config_file_name is not None: fileConfig(config.config_file_name)
 target_metadata = Base.metadata
 def run_migrations_offline():
     context.configure(url=config.get_main_option("sqlalchemy.url"), target_metadata=target_metadata, literal_binds=True)

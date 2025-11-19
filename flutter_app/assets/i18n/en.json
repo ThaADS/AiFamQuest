@@ -1,16 +1,100 @@
 {
-  "app.title": "FamQuest",
-  "today": "Today",
-  "login": "Log in",
-  "email": "Email",
-  "password": "Password",
-  "otp": "2FA (optional)",
-  "tasks": "Tasks",
-  "rewards": "Rewards",
-  "settings": "Settings",
-  "vision.tips": "Cleaning Tips",
-  "admin": "Parent Admin",
-  "shop": "Shop",
-  "kiosk": "Kiosk",
-  "speak": "Voice task"
+  "app_name": "FamQuest",
+  "app_tagline": "The family planner with gamification",
+  "navigation": {
+    "home": "Home",
+    "calendar": "Calendar",
+    "tasks": "Tasks",
+    "shop": "Shop",
+    "gamification": "Gaming",
+    "settings": "Settings"
+  },
+  "auth": {
+    "login": "Log In",
+    "logout": "Log Out",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "create_account": "Create Account",
+    "already_have_account": "Already have an account?",
+    "setup_two_fa": "Set up 2FA",
+    "two_fa_code": "Enter 6-digit code",
+    "verify": "Verify"
+  },
+  "tasks": {
+    "create_task": "Create Task",
+    "edit_task": "Edit Task",
+    "delete_task": "Delete Task",
+    "complete_task": "Complete Task",
+    "task_title": "Title",
+    "task_description": "Description",
+    "task_category": "Category",
+    "task_due_date": "Due Date",
+    "task_points": "Points",
+    "claim_task": "Claim Task",
+    "upload_proof": "Upload Proof",
+    "my_tasks": "My Tasks",
+    "all_tasks": "All Tasks",
+    "no_tasks": "No Tasks"
+  },
+  "calendar": {
+    "calendar": "Calendar",
+    "create_event": "Create Event",
+    "event_title": "Title",
+    "event_date": "Date",
+    "event_time": "Time",
+    "today": "Today",
+    "tomorrow": "Tomorrow"
+  },
+  "gamification": {
+    "points": "Points",
+    "badges": "Badges",
+    "shop": "Shop",
+    "reward_theme": "Theme",
+    "buy": "Buy",
+    "cost": "Costs {points} points"
+  },
+  "profile": {
+    "profile": "Profile",
+    "display_name": "Display Name",
+    "role": "Role",
+    "theme": "Theme",
+    "language": "Language"
+  },
+  "family": {
+    "family": "Family",
+    "members": "Members",
+    "invite_member": "Invite Member",
+    "permissions": "Permissions"
+  },
+  "ai_features": {
+    "ai_planner": "AI Planner",
+    "voice_commands": "Voice Commands",
+    "vision_tips": "Vision Tips",
+    "homework_coach": "Homework Coach"
+  },
+  "kiosk": {
+    "kiosk_mode": "Kiosk Mode",
+    "todays_tasks": "Today's Tasks"
+  },
+  "settings": {
+    "settings": "Settings",
+    "offline_mode": "Offline Mode",
+    "notifications": "Notifications",
+    "about": "About"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "no_data": "No data",
+    "error_occurred": "Error occurred",
+    "success": "Success"
+  },
+  "time": {
+    "now": "Now",
+    "today": "Today",
+    "yesterday": "Yesterday"
+  }
 }

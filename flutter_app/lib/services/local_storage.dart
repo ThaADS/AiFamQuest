@@ -4,9 +4,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 /// Local storage service using Hive for offline-first architecture
 /// Provides encrypted storage for sensitive data and plain storage for performance-critical data
-class LocalStorage {
-  static final LocalStorage instance = LocalStorage._();
-  LocalStorage._();
+class FamQuestStorage {
+  static final FamQuestStorage instance = FamQuestStorage._();
+  FamQuestStorage._();
 
   final _secureStorage = const FlutterSecureStorage();
   late List<int> _encryptionKey;
@@ -18,6 +18,7 @@ class LocalStorage {
   late Box<dynamic> _badgesBox;
   late Box<dynamic> _syncMetadataBox;
   late Box<dynamic> _conflictsBox;
+  late Box<dynamic> _syncQueueBox;
 
   // Encrypted boxes for sensitive data
   late Box<dynamic> _usersBox;
@@ -44,6 +45,7 @@ class LocalStorage {
     _badgesBox = await Hive.openBox('badges');
     _syncMetadataBox = await Hive.openBox('sync_metadata');
     _conflictsBox = await Hive.openBox('conflicts');
+    _syncQueueBox = await Hive.openBox('sync_queue');
 
     // Open encrypted boxes (sensitive data)
     final cipher = HiveAesCipher(_encryptionKey);
@@ -95,13 +97,12 @@ class LocalStorage {
   /// Get all entities from specified box
   Future<List<Map<String, dynamic>>> getAll(String boxName) async {
     final box = _getBox(boxName);
-    return box.values
-        .map((e) => Map<String, dynamic>.from(e as Map))
-        .toList();
+    return box.values.map((e) => Map<String, dynamic>.from(e as Map)).toList();
   }
 
   /// Put entity into specified box with sync metadata
-  Future<void> put(String boxName, String id, Map<String, dynamic> entity) async {
+  Future<void> put(
+      String boxName, String id, Map<String, dynamic> entity) async {
     final box = _getBox(boxName);
 
     // Add sync metadata
@@ -149,9 +150,8 @@ class LocalStorage {
     int? offset,
   }) async {
     final box = _getBox(boxName);
-    var results = box.values
-        .map((e) => Map<String, dynamic>.from(e as Map))
-        .toList();
+    var results =
+        box.values.map((e) => Map<String, dynamic>.from(e as Map)).toList();
 
     // Apply filter
     if (where != null) {
@@ -218,7 +218,8 @@ class LocalStorage {
   Future<List<Map<String, dynamic>>> getDirtyEntities(String boxName) async {
     return query(
       boxName,
-      where: (entity) => entity['isDirty'] == true && entity['isDeleted'] != true,
+      where: (entity) =>
+          entity['isDirty'] == true && entity['isDeleted'] != true,
     );
   }
 
@@ -226,7 +227,8 @@ class LocalStorage {
   Future<List<Map<String, dynamic>>> getDeletedEntities(String boxName) async {
     return query(
       boxName,
-      where: (entity) => entity['isDeleted'] == true && entity['isDirty'] == true,
+      where: (entity) =>
+          entity['isDeleted'] == true && entity['isDirty'] == true,
     );
   }
 
@@ -281,7 +283,8 @@ class LocalStorage {
   }
 
   /// Update last sync timestamp
-  Future<void> updateLastSyncTimestamp(String entityType, DateTime timestamp) async {
+  Future<void> updateLastSyncTimestamp(
+      String entityType, DateTime timestamp) async {
     final metadata = _syncMetadataBox.get(entityType) ?? <String, dynamic>{};
     metadata['lastSyncAt'] = timestamp.toUtc().toIso8601String();
     metadata['successfulSyncs'] = (metadata['successfulSyncs'] ?? 0) + 1;
@@ -307,7 +310,8 @@ class LocalStorage {
 
   /// Store conflict for manual resolution
   Future<void> storeConflict(Map<String, dynamic> conflict) async {
-    final conflictId = conflict['id'] ?? DateTime.now().millisecondsSinceEpoch.toString();
+    final conflictId =
+        conflict['id'] ?? DateTime.now().millisecondsSinceEpoch.toString();
     conflict['storedAt'] = DateTime.now().toUtc().toIso8601String();
     conflict['resolved'] = false;
     await _conflictsBox.put(conflictId, conflict);
@@ -333,7 +337,7 @@ class LocalStorage {
 
   /// Delete resolved conflicts older than 7 days
   Future<void> cleanupOldConflicts() async {
-    final cutoff = DateTime.now().subtract(Duration(days: 7));
+    final cutoff = DateTime.now().subtract(const Duration(days: 7));
     final toDelete = <String>[];
 
     for (final key in _conflictsBox.keys) {
@@ -449,6 +453,8 @@ class LocalStorage {
         return _badgesBox;
       case 'users':
         return _usersBox;
+      case 'sync_queue':
+        return _syncQueueBox;
       default:
         throw Exception('Unknown box: $boxName');
     }

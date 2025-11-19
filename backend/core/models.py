@@ -1,10 +1,22 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, Boolean, DateTime, ForeignKey, Text, JSON, Index
-from sqlalchemy.dialects.postgresql import UUID, JSONB, ARRAY
+import os
 from datetime import datetime
 from typing import Optional, List
 import uuid
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, Integer, Boolean, DateTime, ForeignKey, Text, JSON, Index
+from sqlalchemy.dialects.postgresql import UUID, JSONB as PGJSONB, ARRAY as PGARRAY
 from core.db import Base
+
+# Fallback types for SQLite so local dev works without Postgres extensions
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./famquest.db")
+if DATABASE_URL.startswith("sqlite"):
+    JSONB = JSON
+
+    def ARRAY(*_args, **_kwargs):
+        return JSON
+else:
+    JSONB = PGJSONB
+    ARRAY = PGARRAY
 
 # Helper function for UUID generation
 def gen_uuid():
@@ -203,7 +215,7 @@ class TaskLog(Base):
     action: Mapped[str] = mapped_column(String, nullable=False)  # completed|approved|rejected|reassigned
 
     # Metadata (JSONB for flexibility)
-    metadata: Mapped[dict] = mapped_column(JSONB, default=dict, server_default='{}')
+    meta: Mapped[dict] = mapped_column("metadata", JSONB, default=dict, server_default='{}')
     # Example: {"photos": ["url1"], "rating": 4, "comment": "Good job!"}
 
     createdAt: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
@@ -517,7 +529,7 @@ class AIUsageLog(Base):
     action: Mapped[str] = mapped_column(String, nullable=False)  # 'plan_week' | 'generate_tasks' | 'study_plan'
 
     # Metadata
-    metadata: Mapped[dict] = mapped_column(JSONB, default=dict, server_default='{}')
+    meta: Mapped[dict] = mapped_column("metadata", JSONB, default=dict, server_default='{}')
     # Example: {"tasks_generated": 5, "model": "gpt-4", "tokens": 1200}
 
     createdAt: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)

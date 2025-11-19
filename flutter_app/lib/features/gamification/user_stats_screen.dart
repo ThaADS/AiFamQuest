@@ -125,7 +125,7 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.bar_chart, size: 64, color: colorScheme.secondary),
+            Icon(Icons.bar_chart, size: 64, color: colorScheme.error),
             const SizedBox(height: 16),
             Text('No stats yet', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
@@ -372,7 +372,7 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Icon(Icons.emoji_events, size: 40, color: Colors.orange.shade700),
+            const Icon(Icons.emoji_events, size: 40, color: Colors.orange),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

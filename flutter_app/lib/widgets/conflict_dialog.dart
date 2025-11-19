@@ -30,7 +30,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Row(
+      title: const Row(
         children: [
           Icon(Icons.warning_amber_rounded, color: Colors.orange),
           SizedBox(width: 8),
@@ -51,11 +51,11 @@ class _ConflictDialogState extends State<ConflictDialog> {
             children: [
               // Conflict description
               _buildConflictDescription(),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Toggle diff/full view
               _buildViewToggle(),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Client version
               _buildVersionCard(
@@ -65,7 +65,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
                 color: Colors.blue,
               ),
 
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
 
               // Server version
               _buildVersionCard(
@@ -75,7 +75,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
                 color: Colors.green,
               ),
 
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Diff viewer
               if (_diff.isNotEmpty) _buildDiffView(),
@@ -89,7 +89,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
 
   Widget _buildConflictDescription() {
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.orange.shade50,
         borderRadius: BorderRadius.circular(8),
@@ -100,21 +100,23 @@ class _ConflictDialogState extends State<ConflictDialog> {
         children: [
           Text(
             'Type: ${widget.conflict.entityType}',
-            style: TextStyle(fontWeight: FontWeight.w600),
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
-          SizedBox(height: 4),
-          Text(
+          const SizedBox(height: 4),
+          const Text(
             'Your changes and server changes conflict. Please choose which version to keep.',
             style: TextStyle(fontSize: 13, color: Colors.black87),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Row(
             children: [
-              _buildVersionBadge('Client v${widget.conflict.clientVersion}', Colors.blue),
-              SizedBox(width: 8),
-              Icon(Icons.sync_problem, size: 16, color: Colors.orange),
-              SizedBox(width: 8),
-              _buildVersionBadge('Server v${widget.conflict.serverVersion}', Colors.green),
+              _buildVersionBadge(
+                  'Client v${widget.conflict.clientVersion}', Colors.blue),
+              const SizedBox(width: 8),
+              const Icon(Icons.sync_problem, size: 16, color: Colors.orange),
+              const SizedBox(width: 8),
+              _buildVersionBadge(
+                  'Server v${widget.conflict.serverVersion}', Colors.green),
             ],
           ),
         ],
@@ -124,7 +126,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
 
   Widget _buildVersionBadge(String label, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
@@ -149,10 +151,10 @@ class _ConflictDialogState extends State<ConflictDialog> {
   Widget _buildViewToggle() {
     return Row(
       children: [
-        Text('View: ', style: TextStyle(fontWeight: FontWeight.w600)),
-        SizedBox(width: 8),
+        const Text('View: ', style: TextStyle(fontWeight: FontWeight.w600)),
+        const SizedBox(width: 8),
         SegmentedButton<bool>(
-          segments: [
+          segments: const [
             ButtonSegment(
               value: true,
               label: Text('Changes Only'),
@@ -188,7 +190,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
         : data;
 
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
@@ -200,7 +202,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
           Row(
             children: [
               Icon(Icons.devices, size: 16, color: color),
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
               Text(
                 title,
                 style: TextStyle(
@@ -216,39 +218,43 @@ class _ConflictDialogState extends State<ConflictDialog> {
             ],
           ),
           if (timestamp != null) ...[
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               'Updated: ${_formatTimestamp(timestamp)}',
-              style: TextStyle(fontSize: 11, color: Colors.black54),
+              style: const TextStyle(fontSize: 11, color: Colors.black54),
             ),
           ],
-          SizedBox(height: 8),
-          ...displayData.entries.where((e) => !_isMetadataField(e.key)).map((e) {
+          const SizedBox(height: 8),
+          ...displayData.entries
+              .where((e) => !_isMetadataField(e.key))
+              .map((e) {
             final hasConflict = _diff.containsKey(e.key);
             return Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (hasConflict)
-                    Icon(Icons.warning, size: 14, color: Colors.orange)
+                    const Icon(Icons.warning, size: 14, color: Colors.orange)
                   else
-                    Icon(Icons.check_circle, size: 14, color: Colors.green),
-                  SizedBox(width: 6),
+                    const Icon(Icons.check_circle,
+                        size: 14, color: Colors.green),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           e.key,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 12,
                           ),
                         ),
                         Text(
                           _formatValue(e.value),
-                          style: TextStyle(fontSize: 12, color: Colors.black87),
+                          style: const TextStyle(
+                              fontSize: 12, color: Colors.black87),
                         ),
                       ],
                     ),
@@ -264,7 +270,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
 
   Widget _buildDiffView() {
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
         borderRadius: BorderRadius.circular(8),
@@ -275,15 +281,15 @@ class _ConflictDialogState extends State<ConflictDialog> {
         children: [
           Row(
             children: [
-              Icon(Icons.compare_arrows, size: 16, color: Colors.grey.shade700),
-              SizedBox(width: 6),
+              const Icon(Icons.compare_arrows, size: 16, color: Colors.orange),
+              const SizedBox(width: 6),
               Text(
                 'Differences (${_diff.length} fields)',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           ..._diff.entries.map((e) {
             final field = e.value;
             return _buildDiffRow(e.key, field);
@@ -295,19 +301,19 @@ class _ConflictDialogState extends State<ConflictDialog> {
 
   Widget _buildDiffRow(String fieldName, ConflictField field) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             fieldName,
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 13,
               color: Colors.black87,
             ),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Row(
             children: [
               Expanded(
@@ -317,7 +323,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
                   Colors.blue,
                 ),
               ),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Icon(Icons.arrow_forward, size: 16, color: Colors.grey),
               ),
@@ -337,7 +343,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
 
   Widget _buildDiffValue(String label, dynamic value, Color color) {
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(6),
@@ -359,10 +365,10 @@ class _ConflictDialogState extends State<ConflictDialog> {
               ),
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             _formatValue(value),
-            style: TextStyle(fontSize: 12, color: Colors.black87),
+            style: const TextStyle(fontSize: 12, color: Colors.black87),
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
           ),
@@ -379,7 +385,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
         onPressed: () {
           Navigator.of(context).pop();
         },
-        child: Text('Cancel'),
+        child: const Text('Cancel'),
       ),
       TextButton(
         onPressed: () {
@@ -395,7 +401,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
         style: TextButton.styleFrom(
           foregroundColor: Colors.green,
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.cloud_download, size: 16),
@@ -418,7 +424,7 @@ class _ConflictDialogState extends State<ConflictDialog> {
         style: TextButton.styleFrom(
           foregroundColor: Colors.blue,
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.devices, size: 16),
@@ -430,11 +436,12 @@ class _ConflictDialogState extends State<ConflictDialog> {
       if (canMerge)
         FilledButton(
           onPressed: () async {
-            final resolution = await ConflictResolver.instance.merge(widget.conflict);
+            final resolution =
+                await ConflictResolver.instance.merge(widget.conflict);
             widget.onResolve(resolution);
             Navigator.of(context).pop();
           },
-          child: Row(
+          child: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.merge, size: 16),

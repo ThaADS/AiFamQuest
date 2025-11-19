@@ -1,0 +1,32 @@
+{
+  "app_name": "FamQuest",
+  "navigation": {
+    "home": "Ana Sayfa",
+    "calendar": "Takvim",
+    "tasks": "Görevler",
+    "shop": "Mağaza",
+    "gamification": "Oyunlar",
+    "settings": "Ayarlar"
+  },
+  "auth": {
+    "login": "Giriş Yap",
+    "logout": "Çıkış Yap",
+    "register": "Kayıt Ol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "create_account": "Hesap Oluştur"
+  },
+  "tasks": {
+    "create_task": "Görev Oluştur",
+    "edit_task": "Görevi Düzenle",
+    "complete_task": "Görevi Tamamla",
+    "my_tasks": "Görevlerim",
+    "no_tasks": "Görev Yok"
+  },
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "loading": "Yükleniyor..."
+  }
+}

@@ -314,12 +314,12 @@ class _TwoFASetupScreenState extends State<TwoFASetupScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        Wrap(
+        const Wrap(
           spacing: 8,
           children: [
-            Chip(label: const Text('Google Authenticator')),
-            Chip(label: const Text('Authy')),
-            Chip(label: const Text('1Password')),
+            Chip(label: Text('Google Authenticator')),
+            Chip(label: Text('Authy')),
+            Chip(label: Text('1Password')),
           ],
         ),
 
@@ -438,7 +438,7 @@ class _TwoFASetupScreenState extends State<TwoFASetupScreen> {
           ),
           child: Row(
             children: [
-              Icon(Icons.warning, color: Colors.orange.shade900),
+              const Icon(Icons.warning, color: Colors.orange),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -500,7 +500,6 @@ class _TwoFASetupScreenState extends State<TwoFASetupScreen> {
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // TODO: Implement download as TXT file
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Download feature coming soon'),

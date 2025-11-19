@@ -149,11 +149,11 @@ class _KioskShellState extends ConsumerState<KioskShell> {
                       // Current time (large, always visible)
                       Text(
                         DateFormat('HH:mm').format(_currentTime),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          shadows: const [
+                          shadows: [
                             Shadow(
                               blurRadius: 4,
                               color: Colors.black54,
@@ -165,11 +165,11 @@ class _KioskShellState extends ConsumerState<KioskShell> {
                       // Date display
                       Text(
                         DateFormat('EEEE, MMM d').format(_currentTime),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w300,
                           color: Colors.white,
-                          shadows: const [
+                          shadows: [
                             Shadow(
                               blurRadius: 4,
                               color: Colors.black54,

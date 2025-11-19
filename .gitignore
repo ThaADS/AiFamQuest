@@ -51,9 +51,30 @@ env/
 venv/
 ENV/
 backend/venv/
+backend/.venv/
 backend/__pycache__/
 *.egg-info/
 .env
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+_tmp_*
+*_tmp.*
+fix_*.py
+complete_*.py
+test_*.py
+test_*.sh
+*_output.txt
+*_SUMMARY.txt
+*_COMPLETE.txt
+*_FILES.txt
+
+# SQL files (except migrations in supabase/)
+*.sql
+!supabase/migrations/*.sql
+!supabase/schema_dump.sql
 
 # IDEs
 .vscode/
@@ -89,3 +110,5 @@ nul
 !README.md
 !CONTRIBUTING.md
 !LICENSE.md
+!STATUS.md
+!CLAUDE.md

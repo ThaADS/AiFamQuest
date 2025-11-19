@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../api/client.dart';
 import '../../models/helper_models.dart';
 
@@ -68,7 +69,33 @@ class _HelperJoinScreenState extends ConsumerState<HelperJoinScreen> {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
+            // QR Scanner button
+            OutlinedButton.icon(
+              onPressed: _isVerifying || _invite != null ? null : _openQRScanner,
+              icon: const Icon(Icons.qr_code_scanner),
+              label: const Text('Scan QR Code'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(child: Divider(color: theme.colorScheme.outline)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'OR',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                Expanded(child: Divider(color: theme.colorScheme.outline)),
+              ],
+            ),
+            const SizedBox(height: 16),
             // PIN code field
             PinCodeTextField(
               length: 6,
@@ -414,7 +441,6 @@ class _HelperJoinScreenState extends ConsumerState<HelperJoinScreen> {
       );
 
       // Navigate to helper home screen
-      // TODO: Add navigation to helper home
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
@@ -434,5 +460,127 @@ class _HelperJoinScreenState extends ConsumerState<HelperJoinScreen> {
   /// Decline helper invite
   void _declineInvite() {
     Navigator.pop(context);
+  }
+
+  /// Open QR code scanner
+  Future<void> _openQRScanner() async {
+    final result = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const QRScannerScreen(),
+      ),
+    );
+
+    if (result != null && mounted) {
+      _pinController.text = result;
+      _verifyCode(result);
+    }
+  }
+}
+
+/// QR Code Scanner Screen
+class QRScannerScreen extends StatefulWidget {
+  const QRScannerScreen({super.key});
+
+  @override
+  State<QRScannerScreen> createState() => _QRScannerScreenState();
+}
+
+class _QRScannerScreenState extends State<QRScannerScreen> {
+  MobileScannerController cameraController = MobileScannerController();
+  bool _isProcessing = false;
+
+  @override
+  void dispose() {
+    cameraController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Scan QR Code'),
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      body: Stack(
+        children: [
+          MobileScanner(
+            controller: cameraController,
+            onDetect: (capture) {
+              if (_isProcessing) return;
+
+              final List<Barcode> barcodes = capture.barcodes;
+              for (final barcode in barcodes) {
+                final String? code = barcode.rawValue;
+                if (code != null && code.length == 6) {
+                  _processCode(code);
+                  break;
+                }
+              }
+            },
+          ),
+          // Overlay with instructions
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.8),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.qr_code_scanner,
+                    color: Colors.white,
+                    size: 48,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Point camera at QR code',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'The code will be scanned automatically',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.white70,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _processCode(String code) {
+    setState(() => _isProcessing = true);
+
+    // Return the scanned code
+    Navigator.pop(context, code);
   }
 }

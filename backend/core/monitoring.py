@@ -5,26 +5,9 @@ Implements real-time cost tracking with Slack alerts
 import os
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
-from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String, Integer, Float, DateTime, Boolean
-from core.db import Base
-
-class AIUsageLog(Base):
-    """Track AI API usage and costs"""
-    __tablename__ = "ai_usage_log"
-
-    id: Mapped[str] = mapped_column(String, primary_key=True)
-    timestamp: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
-    model: Mapped[str] = mapped_column(String, index=True)  # sonnet, haiku, rule-based, cached
-    endpoint: Mapped[str] = mapped_column(String)  # planner, vision, voice
-    tokens_in: Mapped[int] = mapped_column(Integer, default=0)
-    tokens_out: Mapped[int] = mapped_column(Integer, default=0)
-    cost_usd: Mapped[float] = mapped_column(Float, default=0.0)
-    cache_hit: Mapped[bool] = mapped_column(Boolean, default=False)
-    fallback_tier: Mapped[int] = mapped_column(Integer, default=1)  # 1=primary, 2=haiku, 3=rules, 4=cache
-    family_id: Mapped[str] = mapped_column(String, index=True)
-    response_time_ms: Mapped[int] = mapped_column(Integer, default=0)
-    error: Mapped[str] = mapped_column(String, nullable=True)
+from sqlalchemy.orm import Mapped, mapped_column
+from core.models import AIUsageLog
 
 # Cost constants (per 1K tokens)
 COST_SONNET_INPUT = 0.003  # $0.003 per 1K input tokens

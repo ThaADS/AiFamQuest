@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List, Dict, Any
-from datetime import datetime
+from datetime import datetime, date
 
 # === Authentication ===
 class TokenRes(BaseModel): accessToken: str

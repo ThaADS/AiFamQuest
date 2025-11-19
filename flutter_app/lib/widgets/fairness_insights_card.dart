@@ -27,7 +27,7 @@ class FairnessInsightsCard extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: Colors.green,
                 size: 32,

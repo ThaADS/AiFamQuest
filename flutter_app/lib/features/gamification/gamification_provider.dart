@@ -166,6 +166,32 @@ final leaderboardProvider = FutureProvider.autoDispose
   }
 });
 
+/// Streak history provider
+final streakHistoryProvider = FutureProvider.autoDispose<StreakHistory?>((ref) async {
+  final userId = ref.watch(currentUserIdProvider);
+  if (userId == null) return null;
+
+  final client = GamificationClient.instance;
+
+  try {
+    final history = await client.getStreakHistory(userId);
+
+    // Cache for offline access
+    final box = await Hive.openBox('gamification_cache');
+    await box.put('streak_history_$userId', history.toJson());
+
+    return history;
+  } catch (e) {
+    // Fallback to cached data
+    final box = await Hive.openBox('gamification_cache');
+    final cached = box.get('streak_history_$userId');
+    if (cached != null) {
+      return StreakHistory.fromJson(Map<String, dynamic>.from(cached));
+    }
+    rethrow;
+  }
+});
+
 /// Gamification notifier for manual updates
 class GamificationNotifier extends ChangeNotifier {
   final Ref ref;
@@ -178,6 +204,7 @@ class GamificationNotifier extends ChangeNotifier {
     ref.invalidate(badgesProvider);
     ref.invalidate(badgeProgressProvider);
     ref.invalidate(leaderboardProvider);
+    ref.invalidate(streakHistoryProvider);
     notifyListeners();
   }
 
@@ -198,6 +225,35 @@ class GamificationNotifier extends ChangeNotifier {
     // Invalidate badges to trigger refresh
     ref.invalidate(badgesProvider);
     notifyListeners();
+  }
+
+  /// Get earned badges for a user
+  Future<List<UserBadge>> getBadges(String userId) async {
+    final client = GamificationClient.instance;
+    final data = await client.getAvailableBadges(userId);
+    return data['earned'] as List<UserBadge>;
+  }
+
+  /// Get badge progress for a user
+  Future<List<BadgeProgress>> getBadgeProgress(String userId) async {
+    final client = GamificationClient.instance;
+    final data = await client.getAvailableBadges(userId);
+    return data['progress'] as List<BadgeProgress>;
+  }
+
+  /// Get leaderboard for family
+  Future<List<LeaderboardEntry>> getLeaderboard(
+    String familyId, {
+    String period = 'week',
+  }) async {
+    final client = GamificationClient.instance;
+    return client.getLeaderboard(familyId, period: period);
+  }
+
+  /// Get streak history for user
+  Future<StreakHistory> getStreakHistory(String userId) async {
+    final client = GamificationClient.instance;
+    return client.getStreakHistory(userId);
   }
 }
 

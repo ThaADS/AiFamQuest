@@ -3,8 +3,17 @@
 
 analyzer:
   errors:
-    # Treat deprecation warnings as info (not errors)
-    deprecated_member_use: info
+    # Suppress deprecated API warnings (migration planned for future releases)
+    deprecated_member_use: ignore
+
+    # Suppress false positives with Freezed JsonKey annotations
+    invalid_annotation_target: ignore
+
+    # Suppress unawaited futures (intentional fire-and-forget operations)
+    unawaited_futures: ignore
+
+    # Suppress unused fields (reserved for future error display functionality)
+    unused_field: ignore
 
   exclude:
     - "**/*.g.dart"

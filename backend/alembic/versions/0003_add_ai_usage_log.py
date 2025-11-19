@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
 revision = '0003'
-down_revision = '0002'
+down_revision = '0002_complete_mvp_schema'
 branch_labels = None
 depends_on = None
 
@@ -20,7 +20,7 @@ def upgrade():
     op.create_table(
         'ai_usage_log',
         sa.Column('id', sa.String(), nullable=False),
-        sa.Column('timestamp', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
+        sa.Column('timestamp', sa.DateTime(), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
         sa.Column('model', sa.String(), nullable=False),
         sa.Column('endpoint', sa.String(), nullable=False),
         sa.Column('tokens_in', sa.Integer(), nullable=False, server_default='0'),

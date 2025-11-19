@@ -32,7 +32,8 @@ class SyncQueue {
     _failedBox = await Hive.openBox('failed_queue');
 
     // Listen to connectivity changes
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((result) {
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen((result) {
       if (result != ConnectivityResult.none) {
         // Network is back online, trigger sync
         scheduleSyncIfNeeded();
@@ -40,7 +41,7 @@ class SyncQueue {
     });
 
     // Setup interval timer (every 5 minutes)
-    _intervalTimer = Timer.periodic(Duration(minutes: 5), (_) {
+    _intervalTimer = Timer.periodic(const Duration(minutes: 5), (_) {
       scheduleSyncIfNeeded();
     });
 
@@ -236,7 +237,8 @@ class SyncQueue {
 
     final retryCount = operation.retryCount ?? 0;
     final backoffSeconds = _getBackoffSeconds(retryCount);
-    final nextRetryAt = operation.lastAttemptAt!.add(Duration(seconds: backoffSeconds));
+    final nextRetryAt =
+        operation.lastAttemptAt!.add(Duration(seconds: backoffSeconds));
 
     return DateTime.now().toUtc().isAfter(nextRetryAt);
   }
@@ -303,8 +305,11 @@ class SyncOperation {
       entityId: json['entityId'],
       data: Map<String, dynamic>.from(json['data'] ?? {}),
       retryCount: json['retryCount'],
-      queuedAt: json['queuedAt'] != null ? DateTime.parse(json['queuedAt']) : null,
-      lastAttemptAt: json['lastAttemptAt'] != null ? DateTime.parse(json['lastAttemptAt']) : null,
+      queuedAt:
+          json['queuedAt'] != null ? DateTime.parse(json['queuedAt']) : null,
+      lastAttemptAt: json['lastAttemptAt'] != null
+          ? DateTime.parse(json['lastAttemptAt'])
+          : null,
       errorMessage: json['errorMessage'],
     );
   }

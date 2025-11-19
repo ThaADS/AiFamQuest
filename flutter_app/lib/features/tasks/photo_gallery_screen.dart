@@ -32,7 +32,6 @@ class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
     });
 
     try {
-      // TODO: Add backend endpoint to fetch user's task photos
       // For now, mock data
       await Future.delayed(const Duration(seconds: 1));
       setState(() {

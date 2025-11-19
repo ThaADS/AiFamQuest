@@ -493,7 +493,7 @@ class BadgeService:
         five_star_count = db.query(func.count(TaskLog.id)).filter(
             TaskLog.userId == user_id,
             TaskLog.action == "approved",
-            TaskLog.metadata["rating"].astext.cast(db.bind.dialect.type_descriptor(db.Integer)) >= 5
+            TaskLog.meta["rating"].astext.cast(db.bind.dialect.type_descriptor(db.Integer)) >= 5
         ).scalar() or 0
         stats["five_star_tasks"] = five_star_count
 

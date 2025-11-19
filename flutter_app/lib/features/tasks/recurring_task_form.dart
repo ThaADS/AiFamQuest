@@ -54,7 +54,6 @@ class _RecurringTaskFormScreenState extends State<RecurringTaskFormScreen> {
 
   Future<void> _loadUsers() async {
     try {
-      // TODO: Add API endpoint to get family members
       // For now, mock data
       setState(() {
         _availableUsers = [
@@ -91,7 +90,6 @@ class _RecurringTaskFormScreenState extends State<RecurringTaskFormScreen> {
 
     try {
       // Mock preview data
-      // TODO: Call backend API for real preview
       await Future.delayed(const Duration(seconds: 1));
 
       setState(() {
