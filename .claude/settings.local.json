@@ -41,7 +41,8 @@
       "Bash(cmd /c 'tasklist /FI \"\"\"\"MEMUSAGE gt 100000\"\"\"\"')",
       "Bash(git init:*)",
       "Bash(git remote add:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git merge:*)"
     ],
     "deny": [],
     "ask": []
