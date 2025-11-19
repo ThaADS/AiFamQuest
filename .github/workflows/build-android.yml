@@ -122,17 +122,17 @@ jobs:
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> key.properties
           echo "storeFile=release-keystore.jks" >> key.properties
-        if: ${{ secrets.KEYSTORE_PASSWORD != '' }}
+        if: secrets.KEYSTORE_PASSWORD != ''
 
       - name: Decode keystore
         working-directory: flutter_app/android
         run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > release-keystore.jks
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: secrets.ANDROID_KEYSTORE_BASE64 != ''
 
       - name: Build Release APK (signed)
         working-directory: flutter_app
         run: flutter build apk --release --split-per-abi
-        if: ${{ secrets.KEYSTORE_PASSWORD != '' }}
+        if: secrets.KEYSTORE_PASSWORD != ''
 
       - name: Upload Release APKs
         uses: actions/upload-artifact@v4
@@ -140,7 +140,7 @@ jobs:
           name: app-release-apks
           path: flutter_app/build/app/outputs/flutter-apk/*.apk
           retention-days: 90
-        if: ${{ secrets.KEYSTORE_PASSWORD != '' }}
+        if: secrets.KEYSTORE_PASSWORD != ''
 
       - name: Create Release Summary
         run: |
@@ -150,7 +150,7 @@ jobs:
           echo "- Signed and optimized for production" >> $GITHUB_STEP_SUMMARY
           echo "- Minified and obfuscated code" >> $GITHUB_STEP_SUMMARY
           echo "- Ready for Google Play Store upload" >> $GITHUB_STEP_SUMMARY
-        if: ${{ secrets.KEYSTORE_PASSWORD != '' }}
+        if: secrets.KEYSTORE_PASSWORD != ''
 
       - name: Missing Signing Keys Warning
         run: |
@@ -163,4 +163,4 @@ jobs:
           echo "- KEY_PASSWORD" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "See DEPLOYMENT_CHECKLIST.md for instructions" >> $GITHUB_STEP_SUMMARY
-        if: ${{ secrets.KEYSTORE_PASSWORD == '' }}
+        if: secrets.KEYSTORE_PASSWORD == ''
