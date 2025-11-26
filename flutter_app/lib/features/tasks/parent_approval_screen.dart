@@ -216,7 +216,8 @@ class _ParentApprovalScreenState extends State<ParentApprovalScreen> {
               : RefreshIndicator(
                   onRefresh: _loadPendingTasks,
                   child: ListView.builder(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.fromLTRB(
+                        16, 16, 16, 16 + MediaQuery.of(context).padding.bottom),
                     itemCount: _pendingTasks.length,
                     itemBuilder: (context, index) {
                       final task = _pendingTasks[index];

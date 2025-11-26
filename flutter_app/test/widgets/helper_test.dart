@@ -161,9 +161,9 @@ void main() {
     testWidgets('Manual code entry field accepts input',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
-            body: const Padding(
+            body: Padding(
               padding: EdgeInsets.all(16),
               child: TextField(
                 decoration: InputDecoration(
@@ -202,13 +202,13 @@ void main() {
               ],
             ),
             body: ListView(
-              children: [
+              children: const [
                 Card(
                   child: ListTile(
-                    leading: const Icon(Icons.cleaning_services),
-                    title: const Text('Clean Living Room'),
-                    subtitle: const Text('Assigned to you'),
-                    trailing: const Chip(
+                    leading: Icon(Icons.cleaning_services),
+                    title: Text('Clean Living Room'),
+                    subtitle: Text('Assigned to you'),
+                    trailing: Chip(
                       label: Text('Open'),
                       backgroundColor: Colors.blue,
                     ),
@@ -216,10 +216,10 @@ void main() {
                 ),
                 Card(
                   child: ListTile(
-                    leading: const Icon(Icons.local_laundry_service),
-                    title: const Text('Do Laundry'),
-                    subtitle: const Text('Assigned to you'),
-                    trailing: const Chip(
+                    leading: Icon(Icons.local_laundry_service),
+                    title: Text('Do Laundry'),
+                    subtitle: Text('Assigned to you'),
+                    trailing: Chip(
                       label: Text('Open'),
                       backgroundColor: Colors.blue,
                     ),

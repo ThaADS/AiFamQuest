@@ -162,8 +162,8 @@ void main() {
 
     test('Excellent student scenario - consistently quality 4-5', () {
       var lastDate = DateTime(2025, 1, 1);
-      var ef = 2.5;
-      var reps = 0;
+      final ef = 2.5;
+      final reps = 0;
 
       // First review - excellent
       var result = SpacedRepetitionScheduler.calculateNextReview(
@@ -203,8 +203,8 @@ void main() {
 
     test('Mixed performance scenario - quality varies', () {
       var lastDate = DateTime(2025, 1, 1);
-      var ef = 2.5;
-      var reps = 0;
+      final ef = 2.5;
+      final reps = 0;
 
       // First: good (quality 4)
       var result = SpacedRepetitionScheduler.calculateNextReview(

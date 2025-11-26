@@ -455,17 +455,17 @@ void main() {
     testWidgets('Streak counter shows current streak',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: Card(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const Icon(Icons.local_fire_department,
+                    Icon(Icons.local_fire_department,
                         color: Colors.orange, size: 32),
-                    const SizedBox(width: 12),
-                    const Column(
+                    SizedBox(width: 12),
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(

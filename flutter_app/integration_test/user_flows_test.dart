@@ -48,9 +48,9 @@ void main() {
 
     testWidgets('Task with photo requirement enforces photo upload',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Task Test')),
+          body: Center(child: Text('Task Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -67,9 +67,9 @@ void main() {
   group('Parent Approval Flow', () {
     testWidgets('Child submits task for approval, parent approves',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Approval Test')),
+          body: Center(child: Text('Approval Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -87,9 +87,9 @@ void main() {
 
     testWidgets('Parent can reject task with feedback',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Rejection Test')),
+          body: Center(child: Text('Rejection Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -107,9 +107,9 @@ void main() {
   group('Gamification Flow', () {
     testWidgets('User earns points and purchases reward',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Shop Test')),
+          body: Center(child: Text('Shop Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -127,9 +127,9 @@ void main() {
 
     testWidgets('User unlocks badge after completing milestone',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Badge Test')),
+          body: Center(child: Text('Badge Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -145,9 +145,9 @@ void main() {
 
     testWidgets('Streak system tracks consecutive days',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Streak Test')),
+          body: Center(child: Text('Streak Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -163,9 +163,9 @@ void main() {
   group('Calendar and Events Flow', () {
     testWidgets('User creates and views calendar event',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Calendar Test')),
+          body: Center(child: Text('Calendar Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -183,9 +183,9 @@ void main() {
 
     testWidgets('Recurring event creates multiple instances',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Recurring Test')),
+          body: Center(child: Text('Recurring Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -202,9 +202,9 @@ void main() {
   group('Study/Homework Coach Flow', () {
     testWidgets('User creates study plan with AI assistance',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Study Test')),
+          body: Center(child: Text('Study Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -222,9 +222,9 @@ void main() {
 
     testWidgets('User completes quiz and sees results',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Quiz Test')),
+          body: Center(child: Text('Quiz Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -242,9 +242,9 @@ void main() {
   group('Helper System Flow', () {
     testWidgets('Parent invites helper and helper joins',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Helper Invite Test')),
+          body: Center(child: Text('Helper Invite Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -267,9 +267,9 @@ void main() {
 
     testWidgets('Parent assigns task to helper',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Helper Task Test')),
+          body: Center(child: Text('Helper Task Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -288,9 +288,9 @@ void main() {
   group('Offline Sync Flow', () {
     testWidgets('Changes made offline sync when connection restored',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Offline Sync Test')),
+          body: Center(child: Text('Offline Sync Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -308,9 +308,9 @@ void main() {
 
     testWidgets('Conflict resolution handles simultaneous edits',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Conflict Test')),
+          body: Center(child: Text('Conflict Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -330,9 +330,9 @@ void main() {
   group('AI Features Flow', () {
     testWidgets('User gets cleaning tips from photo',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Vision Tips Test')),
+          body: Center(child: Text('Vision Tips Test')),
         ),
       ));
       await tester.pumpAndSettle();
@@ -348,9 +348,9 @@ void main() {
 
     testWidgets('Voice command creates task',
         (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
+      await tester.pumpWidget(const MaterialApp(
         home: Scaffold(
-          body: const Center(child: Text('Voice Test')),
+          body: Center(child: Text('Voice Test')),
         ),
       ));
       await tester.pumpAndSettle();

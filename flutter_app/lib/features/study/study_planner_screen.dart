@@ -399,6 +399,7 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
                         ),
                       ),
                     ),
+                    SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
                   ],
                 ),
               ),

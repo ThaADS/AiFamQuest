@@ -181,7 +181,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.fromLTRB(
+                  24, 24, 24, 24 + MediaQuery.of(context).padding.bottom),
               child: Form(
                 key: _formKey,
                 child: Column(

@@ -1,4 +1,4 @@
-package com.example.famquest_v9
+package com.aifamilyquest.app
 
 import io.flutter.embedding.android.FlutterActivity
 

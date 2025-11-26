@@ -1,11 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../offline_queue.dart';
 import '../services/sync_queue_service.dart';
 import '../services/local_storage.dart';
 import '../models/study_models.dart';
+import '../core/app_logger.dart';
 
 class ApiClient {
   static final ApiClient instance = ApiClient._();
@@ -13,14 +17,41 @@ class ApiClient {
 
   final _storage = const FlutterSecureStorage();
   final _connectivity = Connectivity();
-  String baseUrl = const String.fromEnvironment('API_BASE',
-      defaultValue: 'http://localhost:8000');
+  
+  // Dynamic base URL handling
+  String get baseUrl {
+    // 1. Check .env for explicit override (Production/Custom)
+    final envUrl = dotenv.env['API_BASE'];
+    if (envUrl != null && envUrl.isNotEmpty) {
+      return envUrl;
+    }
+    
+    // 2. Check for Android Emulator
+    if (Platform.isAndroid) {
+      return 'http://10.0.2.2:8000';
+    }
+    
+    // 3. Fallback to localhost (iOS/Web)
+    return 'http://localhost:8000';
+  }
 
-  Future<bool> hasToken() async =>
-      (await _storage.read(key: 'accessToken'))?.isNotEmpty == true;
+  Future<bool> hasToken() async {
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session != null && !session.isExpired) return true;
+    return (await _storage.read(key: 'accessToken'))?.isNotEmpty == true;
+  }
+
   Future<void> setToken(String token) async =>
       _storage.write(key: 'accessToken', value: token);
-  Future<String?> getToken() async => _storage.read(key: 'accessToken');
+
+  Future<String?> getToken() async {
+    // Prefer Supabase session token as it handles refresh automatically
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session != null && !session.isExpired) {
+      return session.accessToken;
+    }
+    return _storage.read(key: 'accessToken');
+  }
 
   Future<Map<String, dynamic>> login(String email, String password,
       {String? otp}) async {

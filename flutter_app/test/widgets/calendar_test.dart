@@ -250,11 +250,11 @@ void main() {
                     border: Border(left: BorderSide(color: Colors.blue, width: 3)),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(Icons.school, size: 16, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      const Expanded(
+                      SizedBox(width: 8),
+                      Expanded(
                         child: Text(
                           'Test Event',
                           style: TextStyle(fontWeight: FontWeight.w600),
@@ -289,14 +289,14 @@ void main() {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding: const EdgeInsets.all(8),
-                child: Column(
+                child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         Icon(Icons.event, size: 14, color: Colors.blue),
-                        const SizedBox(width: 4),
-                        const Expanded(
+                        SizedBox(width: 4),
+                        Expanded(
                           child: Text(
                             'Meeting',
                             style: TextStyle(
@@ -307,8 +307,8 @@ void main() {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 2),
-                    const Text(
+                    SizedBox(height: 2),
+                    Text(
                       '10:00 - 11:00',
                       style: TextStyle(fontSize: 12, color: Colors.blue),
                     ),

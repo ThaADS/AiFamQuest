@@ -3,9 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'services/notification_service.dart' show firebaseMessagingBackgroundHandler;
 import 'features/auth/supabase_login_screen.dart';
 import 'features/auth/forgot_password_screen.dart';
 import 'features/auth/reset_password_screen.dart';
@@ -57,16 +54,6 @@ void main() async {
 
     WidgetsFlutterBinding.ensureInitialized();
     AppLogger.debug('[INIT] ✅ Flutter binding initialized');
-
-    // Initialize Firebase (required before background handler registration)
-    AppLogger.debug('[INIT] 🔥 Initializing Firebase...');
-    await Firebase.initializeApp();
-    AppLogger.debug('[INIT] ✅ Firebase initialized');
-
-    // Register Firebase background message handler
-    AppLogger.debug('[INIT] 📲 Registering background notification handler...');
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-    AppLogger.debug('[INIT] ✅ Background handler registered');
 
     // Load environment variables (ignore if missing in web build)
     AppLogger.debug('[INIT] 📂 Loading .env file...');

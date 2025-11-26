@@ -148,7 +148,7 @@ class _SupabaseLoginScreenState extends State<SupabaseLoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 48),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -162,7 +162,7 @@ class _SupabaseLoginScreenState extends State<SupabaseLoginScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'FamQuest',
+                'AiFamQuest',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.headlineLarge?.copyWith(
                   fontWeight: FontWeight.bold,

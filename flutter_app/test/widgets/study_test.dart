@@ -577,16 +577,16 @@ void main() {
     testWidgets('Next review date is displayed',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: Card(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const Icon(Icons.refresh, color: Colors.purple),
-                    const SizedBox(width: 12),
-                    const Column(
+                    Icon(Icons.refresh, color: Colors.purple),
+                    SizedBox(width: 12),
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(

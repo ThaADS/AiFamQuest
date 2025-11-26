@@ -153,10 +153,10 @@ void main() {
     testWidgets('Points display shows correct icon and value',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: Row(
-              children: const [
+              children: [
                 Icon(Icons.star, color: Colors.amber, size: 20),
                 SizedBox(width: 4),
                 Text(
@@ -232,7 +232,7 @@ void main() {
     testWidgets('Cleaning task shows correct icon',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: Icon(Icons.cleaning_services),
           ),
@@ -247,7 +247,7 @@ void main() {
     testWidgets('Homework task shows correct icon',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: Icon(Icons.school),
           ),
@@ -262,7 +262,7 @@ void main() {
     testWidgets('Pet care task shows correct icon',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: Icon(Icons.pets),
           ),

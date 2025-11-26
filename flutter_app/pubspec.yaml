@@ -48,10 +48,6 @@ dependencies:
   json_annotation: ^4.8.1
   # Share functionality
   share_plus: ^10.1.2
-  # Push notifications
-  firebase_core: ^3.0.0
-  firebase_messaging: ^15.0.0
-  flutter_local_notifications: ^17.0.0
   # In-App Purchases
   in_app_purchase: ^3.1.11
   # Logging framework
